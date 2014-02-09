@@ -11,23 +11,25 @@ def getPulseWidth(data, verbose=False):
 	due to changes in integer division and print statements in python 3, this
 	file is NOT backwards compatibile with python 2!
 	Arguments: data = the data to analyze as a list
-                   verbose = True for a full accounting of data goodness, defaults
-                             to false
+		   verbose = True for a full accounting of data goodness, defaults
+			     to false
 	Returns: the determined pulse width of the transmission
 	"""
 
 	#Get a list of the three most common lengths of zeros,
 	#and the two most common lengths of ones
-	pulseLengthZeros,pulseLengthOnes = getOccuranceFrequencies(data);
+	pulseLengthZeros,pulseLengthOnes = getOccuranceFrequencies([int(i) for i in data]);
 	
 	#Compile a list of the potential pulse widths based on the known relations of morse code
 	potentialWidths = [];
-	if(len(pulseLengthOnes)>0): potentialWidths.append(pulseLengthOnes[0]);	#Based on dot length
-	if(len(pulseLengthOnes)>1): potentialWidths.append(pulseLengthOnes[1]/3);	#Based on dash length
+	print(pulseLengthZeros);
+	
 	if(len(pulseLengthZeros)>0):potentialWidths.append(pulseLengthZeros[0]);	#Based on symbol spaces
-	if(len(pulseLengthZeros)>1):potentialWidths.append(pulseLengthZeros[1]/3);	#Based on character spaces
-	if(len(pulseLengthZeros)>2):potentialWidths.append(pulseLengthZeros[2]/7);	#Based on word spaces
-
+	if(len(pulseLengthZeros)>1):potentialWidths.append(pulseLengthZeros[1]//3);	#Based on character spaces
+	#if(len(pulseLengthZeros)>2):potentialWidths.append(pulseLengthZeros[2]//7);	#Based on word spaces
+	if(len(pulseLengthOnes)>0): potentialWidths.append(pulseLengthOnes[0]);	        #Based on dot length
+	if(len(pulseLengthOnes)>1): potentialWidths.append(pulseLengthOnes[1]//3);	#Based on dash length
+	
 	pulse_width, data_goodness = findPulseWidth([round(width,0) for width in potentialWidths]);
 
 	if(verbose):
@@ -59,13 +61,13 @@ def getOccuranceFrequencies(data):
 		if(pulseIsOnes and datum):
 			pulseLength+=1;
 		elif(pulseIsOnes and not(datum)):
-			pulsesZeros.append(pulseLength);
+			pulsesOnes.append(pulseLength);
 			pulseLength = 1;
 			pulseIsOnes = False;
 		elif(not(pulseIsOnes) and not(datum)):
 			pulseLength+=1;
 		else:
-			pulsesOnes.append(pulseLength);
+			pulsesZeros.append(pulseLength);
 			pulseLength = 1;
 			pulseIsOnes = True;
 
@@ -73,9 +75,12 @@ def getOccuranceFrequencies(data):
 	if pulseIsOnes: pulsesOnes.append(pulseLength);
 	else: pulsesZeros.append(pulseLength);
 
+
 	#Extract modes from lists
-	pulseLengthZeros = Counter(pulsesZeros).most_common(3);
+	pulseLengthZeros = Counter(pulsesZeros).most_common(2);
 	pulseLengthOnes = Counter(pulsesOnes).most_common(2)
+	print("Modal distribution of ones: " +str(pulseLengthZeros));
+	print("Modal distribution of zeros: " +str(pulseLengthOnes));
 
 	return sorted([int(key) for key in dict(pulseLengthZeros).keys()]),sorted([int(key) for key in dict(pulseLengthOnes).keys()]);
 
@@ -88,6 +93,8 @@ def findPulseWidth(data):
 			 data_goodness = the proportion of the data that is equal to the 
 			 pulse width from 0-1
 	"""
+
+	print("Final Data Set: " + str(data));
 	
 	pulse_width = Counter(data).most_common(1);
 	pulse_width, value = dict(pulse_width).popitem();
