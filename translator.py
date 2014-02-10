@@ -1,3 +1,5 @@
+import Utilities
+
 morseDict = { "A":".-","B":"-...","C":"-.-.","D":"-..","E":".","F":"..-.",
     "G":"--.","H":"....","I":"..","J":".---","K":"-.-","L":".-..",
     "M":"--","N":"-.","O":"---","P":".--.","Q":"--.-","R":".-.",
@@ -28,18 +30,10 @@ def trans2Mess(trans_string):
         trans_array = trans_string;
 
     #Trims off leading and trailing zeros
-    trans_array = trimZeros(trans_array);
+    trans_array = Utilities.trimZeros(trans_array);
 
     #Translates the message
-    return transMess2Word(''.join(trans_array))
-
-
-def trimZeros(trans_array):
-    while trans_array[-1]=='0':
-        del trans_array[-1];
-    while trans_array[0]=='0':
-        del trans_array[0];
-    return trans_array;
+    return transMess2Word(''.join(trans_array));
 
 
 def transMess2Word(data):

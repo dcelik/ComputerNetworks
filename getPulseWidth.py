@@ -1,4 +1,5 @@
 from collections import Counter
+import Utilities
 
 def getPulseWidth(data, verbose=False, header=True):
 	"""
@@ -22,6 +23,7 @@ def getPulseWidth(data, verbose=False, header=True):
 	#and the two most common lengths of ones
 	if verbose: print("Initial data string: " + str(data));
 	data = cleanData([int(i) for i in data]);
+	data = Utilities.trimZeros(data)
 	if verbose: print("Cleaned data string: " + str(data));
 	pulseLengthZeros,pulseLengthOnes = getOccuranceFrequencies(data);
 	if verbose: print("Modes from zeros list: " + str(pulseLengthZeros));
@@ -44,7 +46,7 @@ def getPulseWidth(data, verbose=False, header=True):
 		print("Note: data goodness is simply a measure of the uniformity of the most common  binary occurances " +
 		      "in the code for the purposes of obtaining a pulse width and should not be taken to mean that "+
 		      "the message has transmitted without errors.")
-		if(data_goodness<=.5): print("Recorded pulses are irregular - consider requesting repeat of message.");
+		if(data_goodness<=.6): print("Recorded pulses are irregular - consider requesting repeat of message.");
 
 	return pulse_width;
 
