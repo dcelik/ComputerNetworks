@@ -1,6 +1,6 @@
 from collections import Counter
 
-def getPulseWidth(data, verbose=False):
+def getPulseWidth(data, verbose=False, header=True):
 	"""
 	Given the data from a transmission, this function will attempt to retrieve
 	the number of samples taken per LED on cycle. This method assumes that the 
@@ -10,9 +10,12 @@ def getPulseWidth(data, verbose=False):
 	but does not actually transmit a request for a retransmission. IMPORTANT:
 	due to changes in integer division and print statements in python 3, this
 	file is NOT backwards compatibile with python 2!
-	Arguments: data = the data to analyze as a list
-		   verbose = True for a full accounting of data goodness, defaults
+	Arguments:
+
+	data = the data to analyze as a list
+	verbose = True for a full accounting of data goodness, defaults
 			     to false
+	header = True if the data being passed in the known_sample_header 
 	Returns: the determined pulse width of the transmission
 	"""
 
