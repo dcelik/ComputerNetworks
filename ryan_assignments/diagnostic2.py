@@ -3,8 +3,8 @@ diagnostic2-computernetworks
 author: rlouie
 """
 
-import math.sqrt as sqrt
-import math.floor as floor
+from math import sqrt
+from math import floor
 import time
 
 """question 4: a, b, c 
@@ -38,7 +38,7 @@ def isPrime(n):
 def prime100():
 	""" returns the set of all primes btwn 2 and 100 
 	"""
-	return [p for p in xrange(2, 101) if isPrime(p)]
+	return [p for p in range(2, 101) if isPrime(p)]
 
 def timer(fn, x):
 	""" measures execution time of 'fn(x)' using time.perf_counter
