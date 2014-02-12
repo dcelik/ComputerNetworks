@@ -9,7 +9,7 @@ def main():
         print("Listening for transmissions...")
         start_of_msg = MonitorStartOfMsg()
         print("Receiving transmission...")
-        known_sample_header = ReadKnownSampleHeader(start_of_msg)
+        pw = ReadStartSequence(start_of_msg)
         remaining_binary_message = CaptureMessage()
         print("Transmission Received!")
         pwidth = getPulseWidth(known_sample_header, verbose=True, header=True) 

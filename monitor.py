@@ -61,6 +61,18 @@ def MonitorStartOfMsg():
 
     return cache            # return the inital part of the new incoming message
 
+def startDeniz(start_of_msg):
+    one=0
+    zero=0
+    for i in start_of_msg:
+        if i:
+            one+=one
+        else:
+            zero+=zero
+    aveone = ones/10.
+    avezero = ones/10.
+    return (aveone+avezero)/2.0
+
 def ReadStartSequence(start_of_msg):
     """ Captures the known start sequence "11111000001111100000"
     for later analysis of the pulsewidth
@@ -84,7 +96,7 @@ def ReadStartSequence(start_of_msg):
             startSequence.append(nextValue)         # add pulse to chunk
         currentChunksBoolean = not currentChunksBoolean #chunk is now opposite
 
-    return startSequence
+    return len(startSequence)/20
 
 
 def dynamicaParseHeader(PW):
