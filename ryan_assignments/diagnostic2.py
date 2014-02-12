@@ -43,4 +43,4 @@ def prime100():
 def timer(fn, x):
 	""" measures execution time of 'fn(x)' using time.perf_counter
 	"""
-	pass
+	return time.perf_counter(fn(x))

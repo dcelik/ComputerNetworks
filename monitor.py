@@ -125,7 +125,7 @@ def RyanStartSequence(start_of_msg):
     """
     startSequence = []
     workingframe = start_of_msg
-    chunks = 
+    chunks = []
 
     while len(chunks) < 3:
         cutIndex = None
@@ -138,11 +138,13 @@ def RyanStartSequence(start_of_msg):
         chunks.append(workingframe[:cutIndex])
         workingframe = workingframe[cutIndex:]
     # chunks probably look like [[True]*5*PW, [False]*5*PW, [True]*5*PW] and noise
+    i = 1
     for chunk in chunks:
+        print("length of chunk"+str(i)+":"+str(len(chunk))) 
         startSequence += chunk
 
     pwGuess = len(startSequence)/15
-
+    print(pwGuess)
 
     # finish last Falses
 
@@ -151,8 +153,9 @@ def RyanStartSequence(start_of_msg):
         time.sleep(S)
 
     startSequence += workingframe
-
-    if pwGuess == len(startSequence)/20:    
+    pwGuess2 = len(startSequence)/20: 
+    print("pwGuess2:",pwGuess2)
+    if pwGuess == pwGuess2:
         return pwGuess
     else
         print('ERROR: pwGuess does not match expectations')
