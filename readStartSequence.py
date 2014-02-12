@@ -38,14 +38,14 @@ def readStartSequence(start_of_msg):
         pwPreHypothesis += len(binaryCache)-1
         binaryCache = [False]
         if n != 2:
-            while binaryCache[-1] == False
+            while binaryCache[-2:] != [True,True]
                 status = takeMeasurement()
                 binaryCache.append(status)
                 time.sleep(pause)
         else:
             time.sleep(pause*pwHypothesis*5)
-        pwPreHypothesis += len(binaryCache)-1
-        binaryCache = [True]
+        pwPreHypothesis += len(binaryCache)-2
+        binaryCache = [True,True]
         pwHypothesis = pwPreHypothesis/10.0
     pwHypothesis = pwPreHypothesis/15.0
     return int(round(pwHypothesis))
