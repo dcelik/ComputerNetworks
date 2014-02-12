@@ -7,6 +7,8 @@ OUTPUTS: returns the pulse width:
 import RPi.GPIO as GPIO
 import time as time
 
+pause = .1
+
 def takeMeasurement():
     ct=0
 
@@ -25,7 +27,6 @@ def takeMeasurement():
 
 
 def readStartSequence(start_of_msg):
-    pause = .1
     pwPreHypothesis = 0
     binaryCache = start_of_msg
     for n in range(0,2):

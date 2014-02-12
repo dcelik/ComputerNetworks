@@ -3,6 +3,11 @@ from monitor import *
 from chunk import *
 from translator import *
 from readStartSequence import *
+from dynamicParseHeader import *
+from dynamicParseMessage import *
+
+
+pause = .1
 
 def main():
     print("Receiver Online...")
@@ -11,15 +16,18 @@ def main():
         start_of_msg = MonitorStartOfMsg()
         print("Receiving transmission...")
         print(start_of_msg)
-        pw = readStartSequence(start_of_msg)
-        print(pw)
-        remaining_binary_message = CaptureMessage()
-##        print("Transmission Received!")
-##        pwidth = getPulseWidth(known_sample_header, verbose=True, header=True) 
-##        print("Pulse width = " + str(pwidth))
-##        consolidated = consolidate(known_sample_header+remaining_binary_message, pwidth)
-##        print(consolidated)
-##        print(trans2Mess(''.join([fromBoolean(d) for d in consolidated])))
+        pwidth = readStartSequence(start_of_msg)
+        print(pwidth)
+        header = dynamicParseHeader(pwidth)
+        print(header)
+        message = dynamicParseMessage(pwidth,header)
+        #remaining_binary_message = CaptureMessage()
+        print("Transmission Received!")
+        print("Pulse width = " + str(pwidth))
+        print("Message = " + message)
+        #consolidated = consolidate(known_sample_header+remaining_binary_message, pwidth)
+        #print(consolidated)
+        #print(trans2Mess(''.join([fromBoolean(d) for d in consolidated])))
         
 
 def fromBoolean(d):

@@ -8,12 +8,14 @@ date: 2/5/14 15:30
 import RPi.GPIO as GPIO
 import time as time
 import translator as translator
+from NIRDreceive import pause
+
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 RECIPIENT = 'Z' # Should be 'R' if monitor was running on Ryan's pi
-S = .01
+S = pause
 CT_CUTOFF = 7
 cache_size = 250
 
@@ -129,7 +131,7 @@ def RyanStartSequence(start_of_msg):
 
     while len(chunks) < 3:
         cutIndex = None
-        while sum(workingframe)/len(frame) > .55:
+        while sum(workingframe)/len(workingframe) > .55:
             nextValue = (chargetime() < CT_CUTOFF)  # read pulse
             time.sleep(S)
             if workingframe[-1] != nextValue:
@@ -153,11 +155,11 @@ def RyanStartSequence(start_of_msg):
         time.sleep(S)
 
     startSequence += workingframe
-    pwGuess2 = len(startSequence)/20: 
+    pwGuess2 = len(startSequence)/20 
     print("pwGuess2:",pwGuess2)
     if pwGuess == pwGuess2:
         return pwGuess
-    else
+    else:
         print('ERROR: pwGuess does not match expectations')
 
 ##def dynamicaParseHeader(PW):
