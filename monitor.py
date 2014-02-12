@@ -5,11 +5,9 @@ author: rlouie
 date: 2/5/14 15:30
 """
 
-
 import RPi.GPIO as GPIO
 import time as time
 import translator as translator
-
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -63,28 +61,62 @@ def MonitorStartOfMsg():
 
     return cache            # return the inital part of the new incoming message
 
-def ReadKnownSampleHeader(start_of_msg):
-    """ Captures the known sample header "111000111000" for later analysis of the pulsewidth
+def ReadStartSequence(start_of_msg):
+    """ Captures the known start sequence "11111000001111100000"
+    for later analysis of the pulsewidth
 
     arguments:
-        cache: initial part of the message, divided into 4 chunks of 'True and False'
+        cache: initial part of the message, divided into 4 chunks 
+        of 'True and False'
 
     returns:
-        knownSampleHeader: the first part of the header, the known sample, as a boolean list 
+        knownSampleHeader: the first part of the header, the known sample,
+        as a boolean list 
     """
-    knownSampleHeader = start_of_msg
+    startSequence = start_of_msg # add start_cache to beginning
     currentChunksBoolean = True
 
-    for i in range(4):
+    for i in range(4):  # there's 4 "chunks" of on/off sequences (11111)
         nextValue = None
-        while knownSampleHeader[-1] == currentChunksBoolean:
-            nextValue = (chargetime() < CT_CUTOFF)
-        currentChunksBoolean = not currentChunksBoolean #invert currentChunksBoolean
-        time.sleep(S)
-        if i < 3: # do not append extra bits at the end of the known sample header
-            knownSampleHeader.append(nextValue)
+        while startSequence[-1] == currentChunksBoolean: # while in current chunk
+            nextValue = (chargetime() < CT_CUTOFF)  # read pulse
+            time.sleep(S)
+            startSequence.append(nextValue)         # add pulse to chunk
+        currentChunksBoolean = not currentChunksBoolean #chunk is now opposite
 
-    return knownSampleHeader
+    return startSequence
+
+
+def dynamicaParseHeader(PW):
+    pass
+    cache = []
+    while len(cache) < 10*PW:
+        while True:
+            measurement = (chargetime() < CT_CUTOFF)
+            time.sleep(S)
+            currentChunksBoolean = cache[-1]
+            if not cache:                               # cache empty
+                cache.append(measurement)
+            elif currentChunksBoolean == measurement:   # still receiving consistent pattern
+                cache.append(measurement)
+            else:                                       # maybe new cache sequence?
+                measurement2 = (chargetime() < CT_CUTOFF)
+                time.sleep(S)
+                if measurement == measurement2:         # yes, new cache sequence!
+                    cachelength = len(cache)
+                    if cachelength % PW == 1: 
+                        if currentChunksBoolean == True:# a dot!
+                            morse += '.'
+                        else:                            # a symbol space                  
+                            continue
+                    elif cachelength % PW == 3:
+                        if currentChunksBoolean == True:# a dash!
+                            morse += '-'
+                        else:
+                    elif cachelength % PW == 
+
+
+
 
 def CaptureMessage():
     """ Captures a message, a stops capturing after a period of False transmission
