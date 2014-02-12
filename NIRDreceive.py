@@ -2,6 +2,7 @@ from getPulseWidth import getPulseWidth
 from monitor import *
 from chunk import *
 from translator import *
+from readStartSequence import *
 
 def main():
     print("Receiver Online...")
@@ -10,7 +11,7 @@ def main():
         start_of_msg = MonitorStartOfMsg()
         print("Receiving transmission...")
         print(start_of_msg)
-        pw = startDeniz(start_of_msg)
+        pw = readStartSequence(start_of_msg)
         print(pw)
         remaining_binary_message = CaptureMessage()
 ##        print("Transmission Received!")
