@@ -111,6 +111,51 @@ def ReadStartSequence(start_of_msg):
 
     return startsequence
 
+def RyanStartSequence(start_of_msg):
+    """ Captures the known start sequence (boolean list)"11111000001111100000"
+    for later analysis of the pulse ewidth
+
+    arguments:
+        cache: initial part of the message, divided into 4 chunks 
+        of 'True and False'
+
+    returns:
+        knownSampleHeader: the first part of the header, the known sample,
+        as a boolean list 
+    """
+    startSequence = []
+    workingframe = start_of_msg
+    chunks = 
+
+    while len(chunks) < 3:
+        cutIndex = None
+        while sum(workingframe)/len(frame) > .55:
+            nextValue = (chargetime() < CT_CUTOFF)  # read pulse
+            time.sleep(S)
+            if workingframe[-1] != nextValue:
+                cutIndex = workingframe.index(workingframe[-1])
+            workingframe.append(nextValue)
+        chunks.append(workingframe[:cutIndex])
+        workingframe = workingframe[cutIndex:]
+    # chunks probably look like [[True]*5*PW, [False]*5*PW, [True]*5*PW] and noise
+    for chunk in chunks:
+        startSequence += chunk
+
+    pwGuess = len(startSequence)/15
+
+
+    # finish last Falses
+
+    while len(workingframe) <= 5*pwGuess:# workingframe should be 5*PW
+        workingframe.append(chargetime() < CT_CUTOFF)
+        time.sleep(S)
+
+    startSequence += workingframe
+
+    if pwGuess == len(startSequence)/20:    
+        return pwGuess
+    else
+        print('ERROR: pwGuess does not match expectations')
 
 ##def dynamicaParseHeader(PW):
 ##    pass
