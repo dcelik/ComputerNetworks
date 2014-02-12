@@ -62,15 +62,28 @@ def MonitorStartOfMsg():
     return cache            # return the inital part of the new incoming message
 
 def startDeniz(start_of_msg):
-    one=0
-    zero=0
-    for i in start_of_msg:
+    
+    startSequence = start_of_msg # add start_cache to beginning
+
+    for i in range():  # there's 4 "chunks" of on/off sequences (11111)
+        nextValue = None
+        while startSequence[-1] == currentChunksBoolean: # while in current chunk
+            nextValue = (chargetime() < CT_CUTOFF)  # read pulse
+            time.sleep(S)
+            startSequence.append(nextValue)         # add pulse to chunk
+        currentChunksBoolean = not currentChunksBoolean #chunk is now opposite
+
+    return startsequence
+
+    ones=0
+    zeros=0
+    for i in start:
         if i:
-            one+=one
+            ones+=ones
         else:
-            zero+=zero
+            zeros+=zeros
     aveone = ones/10.
-    avezero = ones/10.
+    avezero = zeros/10.
     return (aveone+avezero)/2.0
 
 def ReadStartSequence(start_of_msg):
@@ -96,36 +109,36 @@ def ReadStartSequence(start_of_msg):
             startSequence.append(nextValue)         # add pulse to chunk
         currentChunksBoolean = not currentChunksBoolean #chunk is now opposite
 
-    return len(startSequence)/20
+    return startsequence
 
 
-def dynamicaParseHeader(PW):
-    pass
-    cache = []
-    while len(cache) < 10*PW:
-        while True:
-            measurement = (chargetime() < CT_CUTOFF)
-            time.sleep(S)
-            currentChunksBoolean = cache[-1]
-            if not cache:                               # cache empty
-                cache.append(measurement)
-            elif currentChunksBoolean == measurement:   # still receiving consistent pattern
-                cache.append(measurement)
-            else:                                       # maybe new cache sequence?
-                measurement2 = (chargetime() < CT_CUTOFF)
-                time.sleep(S)
-                if measurement == measurement2:         # yes, new cache sequence!
-                    cachelength = len(cache)
-                    if cachelength % PW == 1: 
-                        if currentChunksBoolean == True:# a dot!
-                            morse += '.'
-                        else:                            # a symbol space                  
-                            continue
-                    elif cachelength % PW == 3:
-                        if currentChunksBoolean == True:# a dash!
-                            morse += '-'
-                        else:
-                    elif cachelength % PW == 
+##def dynamicaParseHeader(PW):
+##    pass
+##    cache = []
+##    while len(cache) < 10*PW:
+##        while True:
+##            measurement = (chargetime() < CT_CUTOFF)
+##            time.sleep(S)
+##            currentChunksBoolean = cache[-1]
+##            if not cache:                               # cache empty
+##                cache.append(measurement)
+##            elif currentChunksBoolean == measurement:   # still receiving consistent pattern
+##                cache.append(measurement)
+##            else:                                       # maybe new cache sequence?
+##                measurement2 = (chargetime() < CT_CUTOFF)
+##                time.sleep(S)
+##                if measurement == measurement2:         # yes, new cache sequence!
+##                    cachelength = len(cache)
+##                    if cachelength % PW == 1: 
+##                        if currentChunksBoolean == True:# a dot!
+##                            morse += '.'
+##                        else:                            # a symbol space                  
+##                            continue
+##                    elif cachelength % PW == 3:
+##                        if currentChunksBoolean == True:# a dash!
+##                            morse += '-'
+##                        else:
+##                    elif cachelength % PW == 
 
 
 

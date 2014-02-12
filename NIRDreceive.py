@@ -9,14 +9,16 @@ def main():
         print("Listening for transmissions...")
         start_of_msg = MonitorStartOfMsg()
         print("Receiving transmission...")
-        pw = ReadStartSequence(start_of_msg)
+        print(start_of_msg)
+        pw = startDeniz(start_of_msg)
+        print(pw)
         remaining_binary_message = CaptureMessage()
-        print("Transmission Received!")
-        pwidth = getPulseWidth(known_sample_header, verbose=True, header=True) 
-        print("Pulse width = " + str(pwidth))
-        consolidated = consolidate(known_sample_header+remaining_binary_message, pwidth)
-        print(consolidated)
-        print(trans2Mess(''.join([fromBoolean(d) for d in consolidated])))
+##        print("Transmission Received!")
+##        pwidth = getPulseWidth(known_sample_header, verbose=True, header=True) 
+##        print("Pulse width = " + str(pwidth))
+##        consolidated = consolidate(known_sample_header+remaining_binary_message, pwidth)
+##        print(consolidated)
+##        print(trans2Mess(''.join([fromBoolean(d) for d in consolidated])))
         
 
 def fromBoolean(d):
