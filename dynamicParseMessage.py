@@ -1,8 +1,8 @@
 """
-dynamicParseHeader(pw)
+dynamicParseMessage(pw, header)
 INPUTS: integer pulse width of the transmission represented by the variable "pw"
-OUTPUTS: list of 3 characters, 1 integer, and the last bit of the transmission to be passed on to dynamicParseMessage
-         [origin, destination, function, length in characters, end of transmission] for example ["A","D","E",1234,[True,True,True]]
+        header carried over from the end of the dynamic header parsing
+OUTPUTS: message as a string
 """
 #import RPi.GPIO as GPIO
 import time as time
@@ -70,19 +70,18 @@ def takeKeyboardInput():
     else:
         return False
 
-def dynamicParseHeader(pw):
+def dynamicParseHeader(pw,header):
     pause = .01
-    shouldSee = True
+    shouldSee = False
     binaryCache = []
-    morseCache = []
-    header = []
-    while len(header) < 7:
+    morseCache = header[4]
+    while len(message) < header[3]:
         lookingBinary = True
         differenceAlreadyFound = False
         while lookingBinary == True:
             time.sleep(pause)
-            status = takeMeasurement()
-            #status = takeKeyboardInput()
+            #status = takeMeasurement()
+            status = takeKeyboardInput()
             binaryCache.append(status)
             if status != shouldSee and differenceAlreadyFound == True:
                 print("Evaluation Caused")
@@ -111,23 +110,30 @@ def dynamicParseHeader(pw):
         else:
             shouldSee = True
             binaryCache = [True,True]
-        if len(morseCache) > 4:
+        if len(morseCache) > 5:
             if morseCache[-4:] == [False,False,False,True]:
                 print("End of Character")
                 binaryString = ''.join([str(int(n)) for n in morseCache[:-3]])
-                header.append(binaryToCharDict[binaryString])
-                print(header)
+                message.append(binaryToCharDict[binaryString])
+                print(message)
                 morseCache = [True]
             elif morseCache[-6:] == [False,False,False,True,True,True]:
                 print("End of Character")
                 binaryString = ''.join([str(int(n)) for n in morseCache[:-5]])
-                header.append(binaryToCharDict[binaryString])
-                print(header)
+                message.append(binaryToCharDict[binaryString])
+                print(message)
                 morseCache = [True,True,True]
-            #elif morseCache[-4:] == [False,False,False,False,False,False,False,True]:
-                #print("End of Word")
-                #lookingMorse = False
-    finalheader = [header[0],header[1],header[2],(int(header[3])*1000 + int(header[4])*100 + int(header[5])*10 + int(header[6])), morseCache]
-    return finalheader
+            elif morseCache[-8:] == [False,False,False,False,False,False,False,True]:
+                print("End of Word")
+                message.append(' ')
+                morseCache = [True]
+                print(message)
+            elif morseCache[-10:] == [False,False,False,False,False,False,False,True,True,True]:
+                print("End of Word")
+                message.append(' ')
+                morseCache = [True,True,True]
+                print(message)
+    finalmessage = ''.join(message)     
+    return finalmessage
                 
         
