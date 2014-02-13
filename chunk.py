@@ -5,10 +5,8 @@ def chunk(L,x):
 def consolidate(L,x):
     x = int(x)
     chunked_list = chunk(L,x) #Divide the list of inputs into smaller lists equal in size to the time step x
-    consolidated_list = [round(sum(chunked_list[i])/x) for i in range(len(chunked_list))] #Average each of the smaller lists and round the result
-    for i in consolidated_list:
-        if i == 1:
-            i = True
-        else:
-            i = False
-    return consolidated_list
+    if len(chunked_list[-1]) < .5*x:
+        consolidated_list = [round(sum(chunked_list[i])/x) for i in range(len(chunked_list)-1)] #Average each of the smaller lists and round the result
+    else:
+        consolidated_list = [round(sum(chunked_list[i])/x) for i in range(len(chunked_list))] #Average each of the smaller lists and round the result
+    return [n == 1 for n in consolidated_list]
