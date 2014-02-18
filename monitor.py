@@ -129,7 +129,7 @@ def RyanStartSequence(start_of_msg):
 
     while len(chunks) < 3:
         cutIndex = None
-        while sum(workingframe)/len(frame) > .55:
+        while sum(workingframe)/len(workingframe) > .55:
             nextValue = (chargetime() < CT_CUTOFF)  # read pulse
             time.sleep(S)
             if workingframe[-1] != nextValue:
@@ -157,7 +157,7 @@ def RyanStartSequence(start_of_msg):
     print("pwGuess2:",pwGuess2)
     if pwGuess == pwGuess2:
         return pwGuess
-    else
+    else:
         print('ERROR: pwGuess does not match expectations')
 
 ##def dynamicaParseHeader(PW):
