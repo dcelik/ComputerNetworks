@@ -8,12 +8,14 @@ date: 2/5/14 15:30
 import RPi.GPIO as GPIO
 import time as time
 import translator as translator
+from NIRDreceive import pause
+
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 RECIPIENT = 'Z' # Should be 'R' if monitor was running on Ryan's pi
-S = .01
+S = pause
 CT_CUTOFF = 7
 cache_size = 250
 
@@ -63,28 +65,33 @@ def MonitorStartOfMsg():
 
 def startDeniz(start_of_msg):
     
-    startSequence = start_of_msg # add start_cache to beginning
+    seq1 = start_of_msg # add start_cache to beginning
 
-    for i in range():  # there's 4 "chunks" of on/off sequences (11111)
-        nextValue = None
-        while startSequence[-1] == currentChunksBoolean: # while in current chunk
-            nextValue = (chargetime() < CT_CUTOFF)  # read pulse
-            time.sleep(S)
-            startSequence.append(nextValue)         # add pulse to chunk
-        currentChunksBoolean = not currentChunksBoolean #chunk is now opposite
+    while !(!seq1[-2] and !seq1[-1]):
+        nextVal = (chartgetime() < CT_CUTOFF)
+        time.sleep(S)
+        seq1.append(nextVal)
+    pw1 = (len(seq1)-2)/5
+    print("Guess 1:" +str(pw1))
+    
+    seq2 = seq1[-2:]
+    while !(seq2[-2] and seq2[-1]):
+        nextVal = (chartgetime() < CT_CUTOFF)
+        time.sleep(S)
+        seq2.append(nextVal)
+    pw2 = len(seq2)
+    print("Guess 2:" +str(pw2))
 
-    return startsequence
+    seq3 = seq1[-2:]
+    while !(!seq1[-2] and !seq1[-1]):
+        nextVal = (chartgetime() < CT_CUTOFF)
+        time.sleep(S)
+        seq3.append(nextVal)
+    pw3 = len(seq3)
+    print("Guess 3:" +str(pw3))
 
-    ones=0
-    zeros=0
-    for i in start:
-        if i:
-            ones+=ones
-        else:
-            zeros+=zeros
-    aveone = ones/10.
-    avezero = zeros/10.
-    return (aveone+avezero)/2.0
+    pw = (pw1+pw1+pw3)/3
+    return pw
 
 def ReadStartSequence(start_of_msg):
     """ Captures the known start sequence "11111000001111100000"
@@ -153,7 +160,7 @@ def RyanStartSequence(start_of_msg):
         time.sleep(S)
 
     startSequence += workingframe
-    pwGuess2 = len(startSequence)/20: 
+    pwGuess2 = len(startSequence)/20 
     print("pwGuess2:",pwGuess2)
     if pwGuess == pwGuess2:
         return pwGuess

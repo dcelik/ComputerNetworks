@@ -7,6 +7,8 @@ OUTPUTS: message as a string
 #import RPi.GPIO as GPIO
 import time as time
 from chunk import *
+from NIRDreceive import pause
+
 
 charToBinaryDict = { "A":"101110",
               "B":"1110101010",
@@ -71,7 +73,6 @@ def takeKeyboardInput():
         return False
 
 def dynamicParseHeader(pw,header):
-    pause = .01
     shouldSee = False
     binaryCache = []
     morseCache = header[4]

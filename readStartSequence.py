@@ -1,11 +1,13 @@
 """
 readStartSequence(start_of_msg)
 INPUTS: takes the start of message captured by the monitor function
-OUTPUTS: returns the pulse width
+OUTPUTS: returns the pulse width:
 """
 
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time as time
+
+pause = .1
 
 def takeMeasurement():
     ct=0
@@ -25,28 +27,34 @@ def takeMeasurement():
 
 
 def readStartSequence(start_of_msg):
-    pause = .01
     pwPreHypothesis = 0
     binaryCache = start_of_msg
-    for n in range(2)
+    for n in range(0,2):
         while binaryCache[-1] == True:
             status = takeMeasurement()
             binaryCache.append(status)
             time.sleep(pause)
-        if binaryCache <= 3:
+        if len(binaryCache) <= 3:
             print("ERROR pulse width too small")
         pwPreHypothesis += len(binaryCache)-1
+        print(pwPreHypothesis)
         binaryCache = [False]
-        if n != 2:
-            while binaryCache[-2:] != [True,True]
+        if n != 1:
+            print("This is working")
+            while binaryCache[-2:] != [True,True]:
                 status = takeMeasurement()
                 binaryCache.append(status)
                 time.sleep(pause)
+            pwPreHypothesis += len(binaryCache)-2
+            binaryCache = [True,True]
         else:
             time.sleep(pause*pwHypothesis*5)
-        pwPreHypothesis += len(binaryCache)-2
-        binaryCache = [True,True]
+
+        print(pwPreHypothesis)
         pwHypothesis = pwPreHypothesis/10.0
+        print("Hypothesis: " + str(pwHypothesis))
     pwHypothesis = pwPreHypothesis/15.0
-    return int(round(pwHypothesis))
+    finalHypothesis = int(round(pwHypothesis))
+    print(finalHypothesis)
+    return finalHypothesis
         

@@ -7,6 +7,7 @@ OUTPUTS: list of 3 characters, 1 integer, and the last bit of the transmission t
 #import RPi.GPIO as GPIO
 import time as time
 from chunk import *
+from NIRDreceive import pause
 
 charToBinaryDict = { "A":"101110",
               "B":"1110101010",
@@ -71,7 +72,6 @@ def takeKeyboardInput():
         return False
 
 def dynamicParseHeader(pw):
-    pause = .01
     shouldSee = True
     binaryCache = []
     morseCache = []
