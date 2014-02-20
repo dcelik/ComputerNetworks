@@ -67,7 +67,7 @@ def startDeniz(start_of_msg):
     
     seq1 = start_of_msg # add start_cache to beginning
 
-    while !(!seq1[-2] and !seq1[-1]):
+    while not(not seq1[-2] and not seq1[-1]):
         nextVal = (chartgetime() < CT_CUTOFF)
         time.sleep(S)
         seq1.append(nextVal)
@@ -75,7 +75,7 @@ def startDeniz(start_of_msg):
     print("Guess 1:" +str(pw1))
     
     seq2 = seq1[-2:]
-    while !(seq2[-2] and seq2[-1]):
+    while not(seq2[-2] and seq2[-1]):
         nextVal = (chartgetime() < CT_CUTOFF)
         time.sleep(S)
         seq2.append(nextVal)
@@ -83,7 +83,7 @@ def startDeniz(start_of_msg):
     print("Guess 2:" +str(pw2))
 
     seq3 = seq1[-2:]
-    while !(!seq1[-2] and !seq1[-1]):
+    while not(not seq1[-2] and not seq1[-1]):
         nextVal = (chartgetime() < CT_CUTOFF)
         time.sleep(S)
         seq3.append(nextVal)
