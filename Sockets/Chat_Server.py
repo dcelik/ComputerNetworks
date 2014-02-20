@@ -5,14 +5,14 @@ Chat_Server.py
 Author: Nick Francisci
 Purpose: A chat server which allows users to "log in" under an alias and
 	then send messages to all other logged on users.
-Status: Command features added 2-19-14, Currently Untested
+Status: Command features added 2-19-14, Tested against Deniz's persistant best efforts to hack it
 """
-
 
 #Future Ideas:
 # - Record dict of usernames that map to IPs and assign that name by default on connect
 # - Change implementation of alias - IP to a dict (which it should be)
 # - Log off users after a period of inactivity
+# - Modularize into classes
 
 import CN_Sockets
 
@@ -27,28 +27,44 @@ class Chat_Server(object):
 	help_cmd = "help"
 	connect_cmd = "connect"
 	disconnect_cmd = "disconnect"
-
+	admin_cmd = "admin"
+	
 	#Server Lists
 	ConnectedClients = [];
 	ClientAliases = [];
+	Users = {};
+	ServerIPChecks = {};
 	ServerLog = [];
 
 	default_client_port = 5280;
+	client_buffer_size = 1024;
+	message_per_timeout_limit = 5;
+	admin_pw = "nick";
 
 
 	#------------User Accessible Commands/Command Parsing------------#
 	def parseCommandString(self, message, source_IP):
 		""" Given a command message, calls the corresponding function and passes any arguments """
 		message = message.split()
-		command = message[0]
-		argument = message[1]
+		print(message)
+		if message is not None:
+			command = message[0];
+		else: return;
+		if len(message)>1:
+			argument = message[1];
+		else: argument=None;
+
+		if source_IP not in self.ConnectedClients and not (command==self.set_name_cmd or command==self.connect_cmd):
+			self.sendMessage("Please connect with \\connect [name] or \\setName [name]", source_IP);
+			return;
 
 		#Connect user command the correct function
 		if command==self.set_name_cmd:
-			self.setName(argument, source_IP);
+			if argument is not None:
+				self.setName(argument, source_IP);
 		elif command==self.connect_cmd:
 			if source_IP in self.ConnectedClients:
-				self.renewConnection()
+				self.renewConnection(source_IP)
 			elif argument is not None:
 				self.setName(argument, source_IP);
 			else:
@@ -57,22 +73,35 @@ class Chat_Server(object):
 			self.disconnectUser(source_IP)
 		elif command==self.help_cmd:
 			self.sendHelp(source_IP);
-		elif command==disp_users_cmd:
+		elif command==self.disp_users_cmd:
 			self.dispUsers(source_IP);
+		elif command==self.admin_cmd:
+			if argument is not None:
+				self.validateAdmin(argument,source_IP);
 		else:
 			self.sendMessage("Invalid command.", source_IP);
 
-	def setName(self, name, source_IP):
+	def validateAdmin(self, pw, source_IP):
+		if pw==self.admin_pw:
+			self.setName("admin",source_IP,True);
+		else:
+			self.sendMessage("Invalid admin login",source_IP);
+			return;
+
+	def setName(self, name, source_IP, admin_override=False):
 		""" Resets a client's alias, or logs them in if they are not already """
+		if (name=="admin" or name=="Admin") and admin_override==False:
+			self.sendMessage("Invalid Username.",source_IP);
+			return;
+			
 		if not name in self.ClientAliases:
 			#If client is already logged in, change his or her alias
 			if source_IP in self.ConnectedClients: 
 				self.ClientAliases[self.ConnectedClients.index(source_IP)] = name;
-				
 			#If client is not logged in, log in with IP & Alias
 			else:   
 				self.ConnectedClients.append(source_IP);
-				self.ClientAliases(name);
+				self.ClientAliases.append(name);
 
 		#Do not allow multiple users to use the same alias at once   
 		else:
@@ -107,13 +136,17 @@ class Chat_Server(object):
 	def requestName(self, dest_IP):
 		""" Sends a message to the destination IP requesting a login """
 		message = "Please enter a name for yourself by responding in the format: \\setName name"
-		sendMessage(message, dest_IP)
+		self.sendMessage(message, dest_IP)
 
 	def relayMessage(self, message, source_IP):
 		""" Relays a message to all connected clients """
+
+		if len(message)>=self.client_buffer_size:
+			self.sendMessage("Message was too long. It was not sent.", source_IP);
+			return;
 	
 		#Attach sender alias to message
-		message = self.ClientAliases(self.ConnectedClients.index(source_IP)) + ": " + message;
+		message = self.ClientAliases[self.ConnectedClients.index(source_IP)] + ": " + message;
 
 		for client in self.ConnectedClients:
 			self.sendMessage(message, client);
@@ -129,7 +162,7 @@ class Chat_Server(object):
 
 
 	#------------Run Server------------#
-	def __init__(self,IP="127.0.0.1",port=5280):
+	def __init__(self,IP="10.7.8.17",port=5280):
 		socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
@@ -146,7 +179,11 @@ class Chat_Server(object):
 					message = bytearray_msg.decode("UTF-8");
 					self.ServerLog.append(message);
 					print(message);
-
+					
+					#Restrict Spamming/Bruteforcing
+					#if ServerIPChecks[sourceIP]==0:
+					#        ServerIPChecks
+					
 					#Logic for evaluating user commands and relaying messages
 					if message[0] == self.command_symbol:
 						self.parseCommandString(message[1:],source_IP);
@@ -159,7 +196,6 @@ class Chat_Server(object):
 
 				#If no message is recieved within timeout, execute this code
 				except timeout:
-					#print (".",end="",flush=True)
 					continue
 
 #------------Executing Code------------#
