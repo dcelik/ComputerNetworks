@@ -6,7 +6,7 @@ class UDP_Client(object):
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
     
     
-    def __init__(self,Server_Address=("192.168.49.117",5280)):
+    def __init__(self,Server_Address=("10.7.24.121",5280)):
 
         socket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
