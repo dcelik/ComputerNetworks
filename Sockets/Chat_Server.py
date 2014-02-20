@@ -1,3 +1,4 @@
+
 """
 Chat_Server.py
 --------------
@@ -6,6 +7,7 @@ Purpose: A chat server which allows users to "log in" under an alias and
 	then send messages to all other logged on users.
 Status: Command features added 2-19-14, Currently Untested
 """
+
 
 #Future Ideas:
 # - Record dict of usernames that map to IPs and assign that name by default on connect
@@ -33,7 +35,7 @@ class Chat_Server(object):
 
 	default_client_port = 5280;
 
-	
+
 	#------------User Accessible Commands/Command Parsing------------#
 	def parseCommandString(self, message, source_IP):
 		""" Given a command message, calls the corresponding function and passes any arguments """
@@ -120,7 +122,6 @@ class Chat_Server(object):
 		""" Sends a message to the destination IP """
 		Server_Address=(dest_IP,self.default_client_port)
 		socket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
-
 		with socket(AF_INET,SOCK_DGRAM) as sock:
 			str_message = message
 			bytearray_message = bytearray(str_message,encoding="UTF-8")
@@ -129,14 +130,11 @@ class Chat_Server(object):
 
 	#------------Run Server------------#
 	def __init__(self,IP="127.0.0.1",port=5280):
-
 		socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
 			sock.settimeout(2.0) # 2 second timeout
-			
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
-			
 			while True:
 				#Check to see if a message is recieved within timeout
 				try:
@@ -144,11 +142,8 @@ class Chat_Server(object):
 					source_IP, source_port = address
 
 					#Actual message handling
-					print ("\nMessage received from ip address {}, port {}:".format(
-					source_IP,source_port))
-
+					print ("\nMessage received from ip address {}, port {}:".format(source_IP,source_port))
 					message = bytearray_msg.decode("UTF-8");
-
 					self.ServerLog.append(message);
 					print(message);
 
@@ -161,7 +156,7 @@ class Chat_Server(object):
 							self.requestName(source_IP);
 						else:
 							self.relayMessage(message, source_IP);
-			
+
 				#If no message is recieved within timeout, execute this code
 				except timeout:
 					#print (".",end="",flush=True)
