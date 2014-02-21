@@ -7,7 +7,7 @@ OUTPUTS: returns the pulse width:
 import RPi.GPIO as GPIO
 import time as time
 
-pause = .1
+pause = 0.1
 
 def takeMeasurement():
     ct=0

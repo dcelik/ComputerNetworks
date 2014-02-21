@@ -10,7 +10,7 @@ GPIO.setup(7,GPIO.OUT)
 def on(): GPIO.output(7,True)
 def off(): GPIO.output(7,False)
 
-s = 1 #Set in conjuction with ReadBlink entry_time
+s = 0.1 #Set in conjuction with ReadBlink entry_time
 charToBinaryDict = { "A":"101110",
               "B":"1110101010",
               "C":"111010111010",

@@ -1,4 +1,5 @@
 from getPulseWidth import getPulseWidth
+pause = 0.1
 from monitor import *
 from chunk import *
 from translator import *
@@ -7,7 +8,7 @@ from dynamicParseHeader import *
 from dynamicParseMessage import *
 
 
-pause = .1
+
 
 def main():
     print("Receiver Online...")
@@ -16,7 +17,8 @@ def main():
         start_of_msg = MonitorStartOfMsg()
         print("Receiving transmission...")
         print(start_of_msg)
-        pwidth = readStartSequence(start_of_msg)
+        #pwidth = readStartSequence(start_of_msg)
+        pwidth = startDeniz(start_of_msg)
         print(pwidth)
         header = dynamicParseHeader(pwidth)
         print(header)

@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 import time as time
 import translator as translator
 from NIRDreceive import pause
-
+import math
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -29,9 +29,8 @@ def chargetime():
 
     GPIO.setup(12,GPIO.OUT)
     GPIO.output(12,GPIO.LOW)
-    time.sleep(S)
-    
-    return ct
+    time.sleep(S)  
+    return ct<CT_CUTOFF
 
 def chargetimes(n=100):
     return [chargetime() for i in range(n)]
@@ -55,7 +54,7 @@ def MonitorStartOfMsg():
 
     while len(cache) < 3:   # exit loop when cache=[True]*3 i.e. when a msg is coming through
         z = chargetime()
-        if z < CT_CUTOFF:   # Something interesting!
+        if z:   # Something interesting!
             cache.append(True)    
         else:               # nothing interesting
             cache = []      
@@ -68,30 +67,30 @@ def startDeniz(start_of_msg):
     seq1 = start_of_msg # add start_cache to beginning
 
     while not(not seq1[-2] and not seq1[-1]):
-        nextVal = (chartgetime() < CT_CUTOFF)
-        time.sleep(S)
+        nextVal = (chargetime())
+        #time.sleep(S)
         seq1.append(nextVal)
     pw1 = (len(seq1)-2)/5
     print("Guess 1:" +str(pw1))
     
     seq2 = seq1[-2:]
     while not(seq2[-2] and seq2[-1]):
-        nextVal = (chartgetime() < CT_CUTOFF)
-        time.sleep(S)
+        nextVal = (chargetime())
+        #time.sleep(S)
         seq2.append(nextVal)
-    pw2 = len(seq2)
+    pw2 = (len(seq2)-2)/5
     print("Guess 2:" +str(pw2))
 
-    seq3 = seq1[-2:]
-    while not(not seq1[-2] and not seq1[-1]):
-        nextVal = (chartgetime() < CT_CUTOFF)
-        time.sleep(S)
+    seq3 = seq2[-2:]
+    while not(not seq3[-2] and not seq3[-1]):
+        nextVal = (chargetime())
+        #time.sleep(S)
         seq3.append(nextVal)
-    pw3 = len(seq3)
+    pw3 = (len(seq3)-2)/5
     print("Guess 3:" +str(pw3))
-
-    pw = (pw1+pw1+pw3)/3
-    return pw
+    pw = ((0.1*pw1)+(0.3*pw2)+(0.6*pw3))
+    print(pw)
+    return math.ceil(pw3)
 
 def ReadStartSequence(start_of_msg):
     """ Captures the known start sequence "11111000001111100000"
@@ -210,7 +209,7 @@ def CaptureMessage():
                                         # general activity denoted by: [False]*cache_size
     while sum(cache)/cache_size > .02:  # break when general inactivity of false signals 
 
-        z = (chargetime() < CT_CUTOFF) and (cache[0])
+        z = (chargetime()) and (cache[0])
         binary.append(z)
         
         cache.append(z)

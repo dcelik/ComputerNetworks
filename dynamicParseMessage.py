@@ -72,7 +72,7 @@ def takeKeyboardInput():
     else:
         return False
 
-def dynamicParseHeader(pw,header):
+def dynamicParseMessage(pw,header):
     shouldSee = False
     binaryCache = []
     morseCache = header[4]
