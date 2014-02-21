@@ -4,7 +4,7 @@ INPUTS: integer pulse width of the transmission represented by the variable "pw"
 OUTPUTS: list of 3 characters, 1 integer, and the last bit of the transmission to be passed on to dynamicParseMessage
          [origin, destination, function, length in characters, end of transmission] for example ["A","D","E",1234,[True,True,True]]
 """
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time as time
 from chunk import *
 from NIRDreceive import pause
