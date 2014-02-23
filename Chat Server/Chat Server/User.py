@@ -13,10 +13,10 @@ class User:
         self.alias = alias;
 
     def toggleAdmin():
-        isAdmin = not isAdmin;
+        self.isAdmin = not self.isAdmin;
         return "Admin status: " + str(isAdmin);
 
     def toggleInvisible():
-        isInvisible = not isInvisible;
-        return "Invisibility: " + str(isInvisible);
+        self.isInvisible = not self.isInvisible;
+        return "Invisibility: " + str(self.isInvisible);
 

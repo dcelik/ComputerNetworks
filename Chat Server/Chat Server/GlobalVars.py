@@ -1,14 +1,11 @@
 #--------Commands--------#
 command_symbol = "\\";
-UserCommands = {"set_name": "setName", "disp_users": "users", "get_help": "help", "connect": "connect","disconnect": "disconnect", "admin": "admin"}
-AdminCommands = {}
-UserCommandList = [v for k,v in UserCommands.items()];
-AdminCommandList = [v for k,v in AdminCommands.items()];
 
 #--------Server Lists--------#
-ClientAliases = [];
 Users = {};
+IPs = {};
 ServerLog = [];
+BannedIPs=[];
 
 #--------Misc Vars--------#
 default_client_port = 5280;
