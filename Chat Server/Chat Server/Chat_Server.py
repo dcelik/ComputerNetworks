@@ -16,7 +16,6 @@ import CN_Sockets
 import GlobalVars as g
 import UserCommands as uc
 import ServerFunctions as s
-import atexit
 
 class Chat_Server(object):
 	
@@ -25,7 +24,6 @@ class Chat_Server(object):
 		socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
-			atexit.register(self.closeSocket, sock);
 			sock.bind((IP,port))
 			sock.settimeout(2.0) # 2 second timeout
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
@@ -54,18 +52,18 @@ class Chat_Server(object):
 				#If no message is received within timeout, execute this code
 				except timeout:
 					continue;
-				except KeyboardInterrupt:
-					sock.close()
-					print("Socket Closed");
-					exit(0)
-				except:
-					#Raise error and proceed
-					continue;
+				#except KeyboardInterrupt:
+				#	sock.close()
+				#	print("Socket Closed");
+				#	exit(0)
+				#except:
+				#	#Raise error and proceed
+				#	continue;
 					
-	def closeSocket(self, sock):
-		""" Ensures that socket is closed on program exit """
-		print(sock)
-		sock.close()
+##	def closeSocket(self, sock):
+##		""" Ensures that socket is closed on program exit """
+##		print(sock)
+##		sock.close()
 
 #------------Executing Code------------#
 if __name__  == "__main__":

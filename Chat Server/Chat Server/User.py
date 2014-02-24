@@ -1,22 +1,21 @@
-import default_client_port from GlobalVars
+from GlobalVars import default_client_port
 
 class User:
-    isInvisible = False;
-    isAdmin = False;
-    
-    messagesInTimeout=0;
-    timeSinceActive=0;
 
-    port = default_client_port
-    
     def __init__(self, alias):
         self.alias = alias;
+        self.isInvisible = False;
+        self.isAdmin = False;
+    
+        self.messagesInTimeout=0;
+        self.timeSinceActive=0;
+        self.port = default_client_port
 
-    def toggleAdmin():
+    def toggleAdmin(self):
         self.isAdmin = not self.isAdmin;
-        return "Admin status: " + str(isAdmin);
+        return "Admin status: " + str(self.isAdmin);
 
-    def toggleInvisible():
+    def toggleInvisible(self):
         self.isInvisible = not self.isInvisible;
         return "Invisibility: " + str(self.isInvisible);
 
