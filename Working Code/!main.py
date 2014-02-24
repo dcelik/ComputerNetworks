@@ -1,24 +1,50 @@
-"""
-main.py
--------
-Author: Nick Francisci
-Purpose: To provide one central user UI function to run all of the program
-Status: Tested and Working 2-17-14
+import RPi.GPIO as GPIO
+import time as time
+import math
+import takeMeasurement.takeMeasurement as takeMeasurement
 
-"""
 
-#----Imports and Setup----#
-from transmit import sendMessage
-import variables
+import translator as translator
+from NIRDreceive import pause
+import math
 
-#----Functions----#
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+
 def main():
-    #Display list of functions available to user (keep these as few as possible)
-    print("Available functions: sendMessage(message)")
+    print("Receiver Online...")
+    while True:
+        print("Listening for transmissions...")
+        start_of_msg = MonitorStartOfMsg()
+        print("Receiving transmission...")
+        print(start_of_msg)
+        #pwidth = readStartSequence(start_of_msg)
+        pwidth = startDeniz(start_of_msg)
+        print(pwidth)
+        header = dynamicParseHeader(pwidth)
+        print(header)
+        message = dynamicParseMessage(pwidth,header)
+        #remaining_binary_message = CaptureMessage()
+        print("Transmission Received!")
+        print("Pulse width = " + str(pwidth))
+        print("Message = " + message)
+        #consolidated = consolidate(known_sample_header+remaining_binary_message, pwidth)
+        #print(consolidated)
+        #print(trans2Mess(''.join([fromBoolean(d) for d in consolidated])))
+        
 
-    #Need to Implement: Working monitor function boiled down to one user runnable function
+def fromBoolean(d):
+    if d:
+        return '1'
+    else:
+        return '0'
 
-#----Running Code----#
+def toBool(d):
+    if d=='1':
+        return True;
+    else:
+        return False;
+
 if __name__ == "__main__":
     main()
 
