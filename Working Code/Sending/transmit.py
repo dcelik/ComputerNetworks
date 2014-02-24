@@ -26,9 +26,10 @@ def off(): GPIO.output(7,False)
 s = variables.blink_time;               #Time given to one blink
 header_pulse = variables.header_pulse;  #Binary string to help establish pulse_width
 stop_pulse = variables.stop_pulse;      #Binary string to establish where message ends
+group_code = variables.group_code;      #Single char representing transmission group code
 origin = variables.origin;              #Single char representing name of sender
 dest = variables.dest;                  #Single char representing name of recipient
-func = variables.func;                  #Function as a string reprentation of 4 numbers
+func = variables.func;                  #Single char representing function of message
 
 
 #----Function Definitions----#
@@ -57,7 +58,7 @@ def sendMessage(message, verbose=False):
     subheader = translator.mess2Trans(subheader);
 
     #Assemble Message  
-    trans = header_pulse + subheader + message + stop_pulse;
+    trans = header_pulse + group_code + subheader + message + stop_pulse;
     print("Transmitting message...");
     if verbose:
         print("Your packaged message: " + translator.trans2Mess(subheader + message))
