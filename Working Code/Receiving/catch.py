@@ -35,30 +35,34 @@ def catchPacket(initialPacket):
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
     """
+    flag = False
     currentPacket = initialPacket
-    if currentPacket[0]: #Deal with True packet
-        z = takeMeasurement()
-        if z and not flag:  
-            currentPacket = [True,currentPacket[1]+1]
-        elif z and flag:
-            currentPacket = [True,currentPacket[1]+2]
-            flag = False
-        elif not z and not flag:
-            flag = True
-        elif not z and flag:
-            return currentPacket
+    while True:
+        if currentPacket[0]: #Deal with True packet
+            z = takeMeasurement()
+            if z and not flag:  
+                currentPacket = [True,currentPacket[1]+1]
+            elif z and flag:
+                currentPacket = [True,currentPacket[1]+2]
+                flag = False
+            elif not z and not flag:
+                flag = True
+            elif not z and flag:
+                print(currentPacket)
+                return currentPacket
 
-    else: #Deal with False packet
-        z = takeMeasurement()
-        if not z and not flag:  
-            currentPacket = [True,currentPacket[1]+1]
-        elif not z and flag:
-            currentPacket = [True,currentPacket[1]+2]
-            flag = False
-        elif z and not flag:
-            flag = True
-        elif z and flag:
-            return currentPacket
+        else: #Deal with False packet
+            z = takeMeasurement()
+            if not z and not flag:  
+                currentPacket = [False,currentPacket[1]+1]
+            elif not z and flag:
+                currentPacket = [False,currentPacket[1]+2]
+                flag = False
+            elif z and not flag:
+                flag = True
+            elif z and flag:
+                print(currentPacket)
+                return currentPacket
         
 ##def catchPacket(initialPacket):
 ##    """ This is the test function """
