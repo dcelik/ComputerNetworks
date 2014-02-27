@@ -6,7 +6,7 @@ def takeMeasurment():
 	True if it reads an "on" pulse for the measurement duration 
 	and False for an "off" pulse.
 	"""
-	S = .01
+	S = .1
 	CUTOFF = 10
 
 	ct=0

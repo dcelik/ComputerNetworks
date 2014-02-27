@@ -44,16 +44,39 @@ def blink(n=5):
         off()
         sleep(s)
 
-
+def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+    """Converts an integer to a base36 string."""
+    if not isinstance(number, (int)):
+        raise TypeError('number must be an integer')
+ 
+    base36 = ''
+    sign = ''
+ 
+    if number < 0:
+        sign = '-'
+        number = -number
+ 
+    if 0 <= number < len(alphabet):
+        return sign + alphabet[number]
+ 
+    while number != 0:
+        number, i = divmod(number, len(alphabet))
+        base36 = alphabet[i] + base36
+ 
+    return sign + base36
+ 
+def base36decode(number):
+    return int(number, 36)
             
 def sendMessage(message, verbose=False):
     """
     Sends a message from the user
     message = the message to be transmitted as a string
     """
-    
+    length = str(base36encode(len(message))); #Length is measured in transmission characters
+    if len(length) == 1:
+        length = "0" + length
     message = translator.mess2Trans(message);
-    length = str(len(message)); #Length is measured in transmission characters
     subheader = origin + dest + func + length;
     subheader = translator.mess2Trans(subheader);
 
@@ -61,7 +84,7 @@ def sendMessage(message, verbose=False):
     trans = header_pulse + group_code + subheader + message + stop_pulse;
     print("Transmitting message...");
     if verbose:
-        print("Your packaged message: " + translator.trans2Mess(subheader + message))
+        print("Your packaged message: " + translator.trans2Mess(trans))
         print("Your message as transmitted: " + trans)
     transmit(trans)
 
