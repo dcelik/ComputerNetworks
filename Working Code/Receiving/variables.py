@@ -37,3 +37,4 @@ charToBinaryDict = { "A":"101110",
               " ":"000000",
               "+":"10111010111010"}
 binaryToCharDict = {v:k for(k,v) in charToBinaryDict.items()}
+tolerance = .9

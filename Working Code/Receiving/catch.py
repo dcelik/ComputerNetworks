@@ -31,10 +31,10 @@ global test
 ##    return ct<CUTOFF
 
 def takeMeasurement():
-    S = 0.1
+    S = 0.01
     GPIO.setup(12,GPIO.OUT)
     GPIO.output(12,GPIO.LOW)
-    sleep(s)
+    time.sleep(S)
     GPIO.setup(12,GPIO.IN)
     return bool(GPIO.input(12))
 
@@ -84,21 +84,21 @@ def cleanPacket(packet,pulse_width):
     Converts packets to binary strings
     """
     if packet[0]:
-        if pulse_width*.5 <= packet[1] <= pulse_width*1.5:
+        if pulse_width*(1-tolerance) <= packet[1] <= pulse_width*(1+tolerance):
             return "1"
-        elif pulse_width*2.5 <= packet[1] <= pulse_width*3.5:
+        elif pulse_width*(3-tolerance) <= packet[1] <= pulse_width*(3+tolerance):
             return "111"
         else:
             print("Packet error!")
             print(packet)
     elif not packet[0]:
-        if pulse_width*.5 <= packet[1] <= pulse_width*1.5:
+        if pulse_width*(1-tolerance) <= packet[1] <= pulse_width*(1+tolerance):
             return "0"
-        elif pulse_width*2.5 <= packet[1] <= pulse_width*3.5:
+        elif pulse_width*(3-tolerance) <= packet[1] <= pulse_width*(3+tolerance):
             return "000"
-        elif pulse_width*6 <= packet[1] <= pulse_width*8:
+        elif pulse_width*(7-tolerance) <= packet[1] <= pulse_width*(7+tolerance):
             return "0000000"
-        elif packet[1] > pulse_width*8:
+        elif packet[1] > pulse_width*(7+tolerance):
             return ""
         else:
             print("Packet error!")
