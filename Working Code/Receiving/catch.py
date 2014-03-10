@@ -9,26 +9,34 @@ global test
 ##testPackets = testPackets + testPackets
 
 #----Functions for taking raw data----#
+##def takeMeasurement():
+##    """ Measures an LED blink with a photoresistor and returns
+##    True if it reads an "on" pulse for the measurement duration 
+##    and False for an "off" pulse.
+##    """
+##    S = .1
+##    CUTOFF = 10
+##
+##    ct=0
+##
+##    GPIO.setup(12,GPIO.IN)
+##
+##    while not GPIO.input(12):
+##        ct += 1
+##
+##    GPIO.setup(12,GPIO.OUT)
+##    GPIO.output(12,GPIO.LOW)
+##    time.sleep(S)  
+##    
+##    return ct<CUTOFF
+
 def takeMeasurement():
-    """ Measures an LED blink with a photoresistor and returns
-    True if it reads an "on" pulse for the measurement duration 
-    and False for an "off" pulse.
-    """
-    S = .1
-    CUTOFF = 10
-
-    ct=0
-
-    GPIO.setup(12,GPIO.IN)
-
-    while not GPIO.input(12):
-        ct += 1
-
+    S = 0.1
     GPIO.setup(12,GPIO.OUT)
     GPIO.output(12,GPIO.LOW)
-    time.sleep(S)  
-    
-    return ct<CUTOFF
+    sleep(s)
+    GPIO.setup(12,GPIO.IN)
+    return bool(GPIO.input(12))
 
 def catchPacket(initialPacket):
     """
