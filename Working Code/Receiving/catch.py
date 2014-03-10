@@ -76,21 +76,21 @@ def cleanPacket(packet):
     Converts packets to binary strings
     """
     if packet[0]:
-        if 5 <= packet[1] <= 15:
+        if pulse_width <= packet[1] <= pulse_width*3:
             return "1"
-        elif 25 <= packet[1] <= 35:
+        elif pulse_width*5 <= packet[1] <= pulse_width*7:
             return "111"
         else:
             print("Packet error!")
             print(packet)
     elif not packet[0]:
-        if 5 <= packet[1] <= 15:
+        if pulse_width <= packet[1] <= pulse_width*3:
             return "0"
-        elif 25 <= packet[1] <= 35:
+        elif pulse_width*5 <= packet[1] <= pulse_width*7:
             return "000"
-        elif 60 <= packet[1] <= 80:
+        elif pulse_width*12 <= packet[1] <= pulse_width*16:
             return "0000000"
-        elif packet[1] > 80:
+        elif packet[1] > pulse_width*16:
             return ""
         else:
             print("Packet error!")
@@ -102,7 +102,7 @@ def base36decode(number):
     """
     return int(number, 36)
         
-def catchHeader(initialPacket):
+def catchHeader(initialPacket, pulse_width):
     """
     Parses the packets that make up the header and returns that information to the user
     """
@@ -111,7 +111,7 @@ def catchHeader(initialPacket):
     while len(header) < 6:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
-        binary = binary + cleanPacket(currentPacket)
+        binary = binary + cleanPacket(currentPacket,pulse_width)
         if binary[-4:] == "1000":
             header = header + binaryToCharDict[binary[:-2]]
             binary = ""
@@ -131,7 +131,7 @@ def catchHeader(initialPacket):
     print("Function: " + function + " Length: " + str(base36decode(length)))
     return header
 
-def catchMessage(initialPacket):
+def catchMessage(initialPacket, pulse_width):
     """
     Parses the packets that make up the message and returns the message to the user
     """
@@ -140,7 +140,7 @@ def catchMessage(initialPacket):
     while message[-1] != "+":
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
-        binary = binary + cleanPacket(currentPacket)
+        binary = binary + cleanPacket(currentPacket, pulse_width)
         if binary[-4:] == "1000":
             message = message + binaryToCharDict[binary[:-2]]
             binary = ""

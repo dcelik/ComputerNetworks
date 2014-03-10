@@ -21,11 +21,12 @@ class Chat_Server(object):
 	
 	#------------Run Server------------#
 	def __init__(self,IP=g.server_ip,port=g.server_port):
+											#	reference class 	address family		UDP/TCP protocol	set time until it returns
 		socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
-			sock.settimeout(2.0) # 2 second timeout
+			sock.settimeout(-1) # No timeout
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
 			while True:
 				#Check to see if a message is received within timeout

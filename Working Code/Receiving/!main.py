@@ -17,11 +17,13 @@ def main():
         initialPacket = [not startSequence[0],2]
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
-        
-        if startSequence[0] and 35 <= startSequence[1] <= 45:
-            print("Start sequence received. Listening...")
-            catchHeader(initialPacket)
-            catchMessage(initialPacket)
+
+        #Nick's Code is added here - not yet tested:
+        pulse_width = startSequence[1]/8
+        if startSequence[0]:
+        	print("Start sequence received. Listening...")
+            catchHeader(initialPacket,pulse_width)
+            catchMessage(initialPacket,pulse_width)
         else:
             print("Error. Start sequence not received.")
             print(currentPacket)

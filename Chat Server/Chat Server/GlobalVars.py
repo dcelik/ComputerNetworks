@@ -1,5 +1,5 @@
 #--------Commands--------#
-command_symbol = "\\";
+command_symbol = "/";
 
 #--------Server Lists--------#
 Users = {};

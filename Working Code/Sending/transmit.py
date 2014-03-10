@@ -82,8 +82,9 @@ def sendMessage(message, verbose=False):
 
     #Assemble Message  
     trans = header_pulse + group_code + subheader + message + stop_pulse;
-    print("Transmitting message...");
+    
     if verbose:
+        print("Transmitting message...");
         print("Your packaged message: " + translator.trans2Mess(trans))
         print("Your message as transmitted: " + trans)
     transmit(trans)
