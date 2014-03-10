@@ -19,7 +19,7 @@ def main():
         initialPacket = [not currentPacket[0],2]
 
         #Nick's Code is added here - not yet tested:
-        pulse_width = startSequence[1]/8
+        pulse_width = startSequence[1]/4
         if startSequence[0]:
         	print("Start sequence received. Listening...")
             catchHeader(initialPacket,pulse_width)
