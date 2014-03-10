@@ -71,7 +71,7 @@ def catchPacket(initialPacket):
 ##    if test < len(testPackets):
 ##        return testPackets[test]
 
-def cleanPacket(packet):
+def cleanPacket(packet,pulse_width):
     """
     Converts packets to binary strings
     """
