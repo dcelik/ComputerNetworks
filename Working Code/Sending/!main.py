@@ -8,7 +8,7 @@ Status: Tested and Working 2-17-14
 """
 
 #----Imports and Setup----#
-from transmit import sendMessage
+from transmit import sendMessage, on, off
 import variables
 
 #----Functions----#

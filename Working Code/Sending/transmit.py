@@ -23,7 +23,8 @@ def off(): GPIO.output(7,False)
 
 
 #----Import Global Variables----#
-s = variables.blink_time;               #Time given to one blink
+blink_time = variables.blink_time;      #Time given to one blink
+one_baud = variables.one_baud;          #Number of blink times for one baud transmission
 header_pulse = variables.header_pulse;  #Binary string to help establish pulse_width
 stop_pulse = variables.stop_pulse;      #Binary string to establish where message ends
 group_code = variables.group_code;      #Single char representing transmission group code
@@ -33,16 +34,16 @@ func = variables.func;                  #Single char representing function of me
 
 
 #----Function Definitions----#
-def blink(n=5):
+def blink(n=5,sleep=1):
     """
     A tester function to ensure that the pi is ready to send signals
     """
     
     for i in range(n):
         on()
-        sleep(s)
+        sleep(sleep)
         off()
-        sleep(s)
+        sleep(sleep)
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""
@@ -73,23 +74,35 @@ def sendMessage(message, verbose=False):
     Sends a message from the user
     message = the message to be transmitted as a string
     """
+    #Assemble LAN message to be sent at group speed
     length = str(base36encode(len(message))); #Length is measured in transmission characters
     if len(length) == 1:
         length = "0" + length
     message = translator.mess2Trans(message);
     subheader = origin + dest + func + length;
     subheader = translator.mess2Trans(subheader);
+    LAN_trans = subheader + message;
 
-    #Assemble Message  
-    trans = header_pulse + group_code + subheader + message + stop_pulse;
+    #Assemble start code, group code, and end code to be sent at standard speed
+    group_code = translator.mess2Trans(group_code)
+    STD_trans_start = header_pulse + group_code;
+    STD_trans_stop = stop_pulse;
     
     if verbose:
         print("Transmitting message...");
-        print("Your packaged message: " + translator.trans2Mess(trans))
-        print("Your message as transmitted: " + trans)
-    transmit(trans)
+        print("Your packaged message: " + translator.trans2Mess(group_code + LAN_trans))
+        print("Your message as transmitted:")
+        print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
+        print(STD_trans_start);
+        print("Sent at group speed of " + str(1/blink_time) + " dots per second:");
+        print(LAN_trans);
+        print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
+        print(STD_trans_stop);
+    transmit(STD_trans_start, one_baud*blink_time);
+    transmit(LAN_trans, blink_time);
+    transmit(STD_trans_stop, one_baud*blink_time);
 
-def transmit(trans):
+def transmit(trans,sleep):
     """
     A helper function for sendMessage that translates the message
     into actual blinks on the pi.
@@ -99,10 +112,10 @@ def transmit(trans):
     for i in range(len(trans)):
         if trans[i] == '1':
             on()
-            sleep(s)
+            sleep(sleep)
         else:
             off()
-            sleep(s)
+            sleep(sleep)
             
     off();
             
