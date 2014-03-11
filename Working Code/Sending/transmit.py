@@ -34,16 +34,16 @@ func = variables.func;                  #Single char representing function of me
 
 
 #----Function Definitions----#
-def blink(n=5,sleep=1):
+def blink(n=5,time=1):
     """
     A tester function to ensure that the pi is ready to send signals
     """
     
     for i in range(n):
         on()
-        sleep(sleep)
+        sleep(time)
         off()
-        sleep(sleep)
+        sleep(time)
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""
@@ -84,13 +84,13 @@ def sendMessage(message, verbose=False):
     LAN_trans = subheader + message;
 
     #Assemble start code, group code, and end code to be sent at standard speed
-    group_code = translator.mess2Trans(group_code)
-    STD_trans_start = header_pulse + group_code;
+    g_c = translator.mess2Trans(group_code)
+    STD_trans_start = header_pulse + g_c;
     STD_trans_stop = stop_pulse;
     
     if verbose:
         print("Transmitting message...");
-        print("Your packaged message: " + translator.trans2Mess(group_code + LAN_trans))
+        print("Your packaged message: " + translator.trans2Mess(g_c + LAN_trans))
         print("Your message as transmitted:")
         print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
         print(STD_trans_start);
@@ -102,7 +102,7 @@ def sendMessage(message, verbose=False):
     transmit(LAN_trans, blink_time);
     transmit(STD_trans_stop, one_baud*blink_time);
 
-def transmit(trans,sleep):
+def transmit(trans,time):
     """
     A helper function for sendMessage that translates the message
     into actual blinks on the pi.
@@ -112,10 +112,10 @@ def transmit(trans,sleep):
     for i in range(len(trans)):
         if trans[i] == '1':
             on()
-            sleep(sleep)
+            sleep(time)
         else:
             off()
-            sleep(sleep)
+            sleep(time)
             
     off();
             
