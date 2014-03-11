@@ -92,7 +92,7 @@ def sendMessage(message, verbose=False):
         print("Transmitting message...");
         print("Your packaged message: " + translator.trans2Mess(g_c + LAN_trans))
         print("Your message as transmitted:")
-        print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
+        print("Sent at standard speed of " + str(1/blink_time) + " dots per second:")
         print(STD_trans_start);
         print("Sent at group speed of " + str(1/blink_time) + " dots per second:");
         print(LAN_trans);

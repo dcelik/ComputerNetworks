@@ -3,7 +3,7 @@ import time as time
 from variables import *
 global test
 
-allPackets = [];
+#allPackets = [];
 
 # The means of testing it without a pi
 ##test = -1
@@ -59,7 +59,7 @@ def catchPacket(initialPacket):
                 flag = True
             elif not z and flag:
                 #print(currentPacket)
-                allPackets.append(currentPacket)
+                #allPackets.append(currentPacket)
                 return currentPacket
 
         else: #Deal with False packet
@@ -73,7 +73,7 @@ def catchPacket(initialPacket):
                 flag = True
             elif z and flag:
                 #print(currentPacket)
-                allPackets.append(currentPacket)
+                #allPackets.append(currentPacket)
                 return currentPacket
         
 ##def catchPacket(initialPacket):
@@ -95,7 +95,7 @@ def cleanPacket(packet,pulse_width):
         else:
             print("Packet error!")
             print(packet)
-            return [True,pulse_width]
+            return "1"
     elif not packet[0]:
         if 0 <= packet[1] <= pulse_width*(1+tolerance):
             return "0"
@@ -108,7 +108,7 @@ def cleanPacket(packet,pulse_width):
         else:
             print("Packet error!")
             print(packet)
-            return [True,pulse_width]
+            return "1"
             
 def base36decode(number):
     """
@@ -188,5 +188,5 @@ def catchMessage(initialPacket, pulse_width):
 
     #print("Message received:")
     #print(message[1:-1])
-    print(allPackets)
+    #print(allPackets)
     return message
