@@ -96,11 +96,11 @@ def sendMessage(message, verbose=False):
         print(STD_trans_start);
         print("Sent at group speed of " + str(1/blink_time) + " dots per second:");
         print(LAN_trans);
-        print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
+        #print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
         print(STD_trans_stop);
     transmit(STD_trans_start, one_baud*blink_time);
     transmit(LAN_trans, blink_time);
-    transmit(STD_trans_stop, one_baud*blink_time);
+    transmit(STD_trans_stop, blink_time);
 
 def transmit(trans,time):
     """
