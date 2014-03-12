@@ -13,6 +13,8 @@ import RPi.GPIO as GPIO
 from time import sleep
 import translator as translator
 import variables as variables
+from receive import receiveAck
+from random import uniform
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -69,7 +71,7 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 def base36decode(number):
     return int(number, 36)
             
-def sendMessage(message, verbose=False):
+def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORLD', verbose=False):
     """
     Sends a message from the user
     message = the message to be transmitted as a string
@@ -84,8 +86,7 @@ def sendMessage(message, verbose=False):
     LAN_trans = subheader + message;
 
     #Assemble start code, group code, and end code to be sent at standard speed
-    g_c = translator.mess2Trans(group_code)
-    STD_trans_start = header_pulse + g_c;
+    STD_trans_start = header_pulse;
     STD_trans_stop = stop_pulse;
     
     if verbose:
@@ -98,9 +99,29 @@ def sendMessage(message, verbose=False):
         print(LAN_trans);
         #print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
         print(STD_trans_stop);
-    transmit(STD_trans_start, blink_time);
-    transmit(LAN_trans, blink_time);
-    transmit(STD_trans_stop, blink_time);
+    trials = 0
+    while trials < 3:
+        trials += 1;
+        while True:
+            packet = catchPacket([False,0],True,(1+uniform(0.4,0.6)))
+            if packet == None:
+                transmit(STD_trans_start, blink_time);
+                transmit(LAN_trans, blink_time);
+                transmit(STD_trans_stop, blink_time);
+        
+                wasReceived = receiveAck(destination);
+                if wasReceived:
+                    return True
+                else:
+                    print("Ack not received.")
+
+    return False
+
+def sendAck(destination):
+    ack = header_pulse + translator.mess2Trans(destination);
+    transmit(ack)
+    print("Ack sent.")
+    return True
 
 def transmit(trans,time):
     """

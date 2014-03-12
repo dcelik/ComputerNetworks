@@ -40,11 +40,12 @@ def takeMeasurement():
     GPIO.setup(12,GPIO.IN)
     return bool(GPIO.input(12))
 
-def catchPacket(initialPacket):
+def catchPacket(initialPacket,stop=False,stop_time=0):
     """
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
     """
+    start_time = time.time()
     flag = False
     currentPacket = initialPacket
     while True:
@@ -75,6 +76,8 @@ def catchPacket(initialPacket):
                 #print(currentPacket)
                 #allPackets.append(currentPacket)
                 return currentPacket
+            elif stop and time.time() >= (start_time+stop_time):
+                return None
         
 ##def catchPacket(initialPacket):
 ##    """ This is the test function """
@@ -116,28 +119,35 @@ def base36decode(number):
     """
     return int(number, 36)
 
-def catchGroupCode(initialPacket, pulse_width):
+def catchAck(pulse_width):
     """
-    Parses the packets that make up the header and returns that information to the user
+    Parses the acknowledgement
     """
-    group_code = ""
+    ack = ""
     binary = ""
-    while len(group_code) < 1:
+    while len(ack) < 2:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
         if binary[-4:] == "1000":
-            group_code = group_code + binaryToCharDict[binary[:-2]]
+            ack = ack + binaryToCharDict[binary[:-2]]
             binary = ""
-            #print(group_code)
+
         if binary[-8:] == "10000000":
-            group_code = group_code + binaryToCharDict[binary]
+            ack = ack + binaryToCharDict[binary]
             binary = ""
-            #print(group_code)
         
-    #print("Group Code Received.")
-    #print("Group code: " + group_code)
-    return group_code
+    return ack
+
+def catchStartSequence(initialPacket):
+    # Catch start sequence
+    startSequence = catchPacket(initialPacket)
+    initialPacket = [not startSequence[0],2]
+    currentPacket = catchPacket(initialPacket)
+    initialPacket = [not currentPacket[0],2]
+    #Actually get the message
+    pulse_width = startSequence[1]/4
+    return pulse_width
 
 def catchHeader(initialPacket, pulse_width):
     """
@@ -145,7 +155,7 @@ def catchHeader(initialPacket, pulse_width):
     """
     header = ""
     binary = ""
-    while len(header) < 5:
+    while len(header) < 7:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
