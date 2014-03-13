@@ -13,7 +13,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import translator as translator
 import variables as variables
-from receive import receiveAck
+from catch import *
 from random import uniform
 
 GPIO.setwarnings(False)
@@ -29,11 +29,6 @@ blink_time = variables.blink_time;      #Time given to one blink
 one_baud = variables.one_baud;          #Number of blink times for one baud transmission
 header_pulse = variables.header_pulse;  #Binary string to help establish pulse_width
 stop_pulse = variables.stop_pulse;      #Binary string to establish where message ends
-group_code = variables.group_code;      #Single char representing transmission group code
-origin = variables.origin;              #Single char representing name of sender
-dest = variables.dest;                  #Single char representing name of recipient
-func = variables.func;                  #Single char representing function of message
-
 
 #----Function Definitions----#
 def blink(n=5,time=1):
@@ -81,7 +76,7 @@ def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORL
     if len(length) == 1:
         length = "0" + length
     message = translator.mess2Trans(message);
-    subheader = origin + dest + func + length;
+    subheader = origin + destination + function + length;
     subheader = translator.mess2Trans(subheader);
     LAN_trans = subheader + message;
 
@@ -91,37 +86,43 @@ def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORL
     
     if verbose:
         print("Transmitting message...");
-        print("Your packaged message: " + translator.trans2Mess(g_c + LAN_trans))
+        print("Your packaged message: " + translator.trans2Mess(LAN_trans))
         print("Your message as transmitted:")
-        print("Sent at standard speed of " + str(1/blink_time) + " dots per second:")
-        print(STD_trans_start);
-        print("Sent at group speed of " + str(1/blink_time) + " dots per second:");
         print(LAN_trans);
-        #print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
-        print(STD_trans_stop);
     trials = 0
     while trials < 3:
         trials += 1;
         while True:
             packet = catchPacket([False,0],True,(1+uniform(0.4,0.6)))
             if packet == None:
-                transmit(STD_trans_start, blink_time);
-                transmit(LAN_trans, blink_time);
-                transmit(STD_trans_stop, blink_time);
-        
-                wasReceived = receiveAck(destination);
-                if wasReceived:
-                    return True
-                else:
-                    print("Ack not received.")
+                break
+        transmit(STD_trans_start, blink_time);
+        transmit(LAN_trans, blink_time);
+        transmit(STD_trans_stop, blink_time);
+        print("Done")
+        wasReceived = receiveAck(destination);
+        if wasReceived:
+            return True
+        else:
+            print("Ack not received.")
 
     return False
 
-def sendAck(destination):
-    ack = header_pulse + translator.mess2Trans(destination);
-    transmit(ack)
-    print("Ack sent.")
-    return True
+def receiveAck(destination):
+    initialPacket = [False,1]
+    #Catch whitespace before ack
+    currentPacket = catchPacket(initialPacket,True,1)
+    if currentPacket == None: #If no ack received return False
+        return False
+    #Catch start sequence and determine pulse width
+    initialPacket = [True,2]
+    pulse_width = catchStartSequence(initialPacket)
+    ack = catchAck([True,2],pulse_width)
+    if ack == destination:
+        return True
+    else:
+        return False
+
 
 def transmit(trans,time):
     """

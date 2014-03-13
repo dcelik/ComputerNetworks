@@ -76,7 +76,7 @@ def catchPacket(initialPacket,stop=False,stop_time=0):
                 #print(currentPacket)
                 #allPackets.append(currentPacket)
                 return currentPacket
-            elif stop and time.time() >= (start_time+stop_time):
+            if stop and time.time() >= (start_time+stop_time):
                 return None
         
 ##def catchPacket(initialPacket):
@@ -96,8 +96,6 @@ def cleanPacket(packet,pulse_width):
         elif pulse_width*(3-tolerance) <= packet[1] <= pulse_width*(3+tolerance):
             return "111"
         else:
-            print("Packet error!")
-            print(packet)
             return "1"
     elif not packet[0]:
         if 0 <= packet[1] <= pulse_width*(1+tolerance):
@@ -109,8 +107,6 @@ def cleanPacket(packet,pulse_width):
         elif packet[1] > pulse_width*(7+tolerance):
             return ""
         else:
-            print("Packet error!")
-            print(packet)
             return "1"
             
 def base36decode(number):
@@ -119,7 +115,7 @@ def base36decode(number):
     """
     return int(number, 36)
 
-def catchAck(pulse_width):
+def catchAck(initialPacket,pulse_width):
     """
     Parses the acknowledgement
     """
@@ -129,13 +125,16 @@ def catchAck(pulse_width):
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
-        if binary[-4:] == "1000":
+        if binary[-4:] == "1000" and binary[:-2] in binaryToCharDict:
             ack = ack + binaryToCharDict[binary[:-2]]
             binary = ""
-
-        if binary[-8:] == "10000000":
+        elif binary[-8:] == "10000000" and binary in binaryToCharDict:
             ack = ack + binaryToCharDict[binary]
             binary = ""
+        elif binary[-4:] == "1000" and not binary[:-2] in binaryToCharDict or binary[-8:] == "10000000" and not binary in binaryToCharDict:
+            ack = ack + "X"
+            binary = ""
+        
         
     return ack
 
@@ -159,14 +158,15 @@ def catchHeader(initialPacket, pulse_width):
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
-        if binary[-4:] == "1000":
+        if binary[-4:] == "1000" and binary[:-2] in binaryToCharDict:
             header = header + binaryToCharDict[binary[:-2]]
             binary = ""
-            #print(header)
-        if binary[-8:] == "10000000":
+        elif binary[-8:] == "10000000" and binary in binaryToCharDict:
             header = header + binaryToCharDict[binary]
             binary = ""
-            #print(header)
+        elif binary[-4:] == "1000" and not binary[:-2] in binaryToCharDict or binary[-8:] == "10000000" and not binary in binaryToCharDict:
+            header = header + "X"
+            binary = ""
         
     #origin = header[0]
     #destination = header[1]
@@ -187,14 +187,17 @@ def catchMessage(initialPacket, pulse_width):
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket, pulse_width)
-        if binary[-4:] == "1000":
+        if binary[-4:] == "1000" and binary[:-2] in binaryToCharDict:
             message = message + binaryToCharDict[binary[:-2]]
             binary = ""
-        elif binary[-8:] == "10000000":
+        elif binary[-8:] == "10000000" and binary[:-6] in binaryToCharDict:
             message = message + binaryToCharDict[binary[:-6]] + " "
             binary = ""
         elif binary == "1011101011101":
             message = message + "+"
+        elif binary[-4:] == "1000" and not binary[:-2] in binaryToCharDict or binary[-8:] == "10000000" and not binary[:-6] in binaryToCharDict:
+            message = message + "X"
+            binary = ""
 
     #print("Message received:")
     #print(message[1:-1])
