@@ -12,7 +12,7 @@ Status: Untested with new modularization
 # - Retrict send frequency to restrict spamming and bruteforcing
 # - Take 2nd argument from user
 
-import CN_Sockets
+import CustomSocket as cs
 import GlobalVars as g
 import UserCommands as uc
 import ServerFunctions as s
@@ -22,7 +22,7 @@ class Chat_Server(object):
 	#------------Run Server------------#
 	def __init__(self,IP=g.server_ip,port=g.server_port):
 											#	reference class 	address family		UDP/TCP protocol	set time until it returns
-		socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
+		socket, AF_INET, SOCK_DGRAM, timeout = cs.socket, cs.AF_INET, cs.SOCK_DGRAM, cs.timeout
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))

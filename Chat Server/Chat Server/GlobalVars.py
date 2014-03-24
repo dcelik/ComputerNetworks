@@ -1,3 +1,5 @@
+from MAC_Identifier import my_ad
+
 #--------Commands--------#
 command_symbol = "/";
 
@@ -8,9 +10,9 @@ ServerLog = [];
 BannedIPs=[];
 
 #--------Misc Vars--------#
-default_client_port = 5280;
-server_port = 5280;
-server_ip = "10.7.8.57";
+default_client_port = 'E';
+server_port = 'E';
+server_ip = my_ad;
 client_buffer_size = 1024;
 message_per_timeout_limit = 5;
 admin_pw = "nick";
