@@ -13,6 +13,8 @@ import RPi.GPIO as GPIO
 from time import sleep
 import translator as translator
 import variables as variables
+from catch import *
+from random import uniform
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -27,11 +29,6 @@ blink_time = variables.blink_time;      #Time given to one blink
 one_baud = variables.one_baud;          #Number of blink times for one baud transmission
 header_pulse = variables.header_pulse;  #Binary string to help establish pulse_width
 stop_pulse = variables.stop_pulse;      #Binary string to establish where message ends
-group_code = variables.group_code;      #Single char representing transmission group code
-origin = variables.origin;              #Single char representing name of sender
-dest = variables.dest;                  #Single char representing name of recipient
-func = variables.func;                  #Single char representing function of message
-
 
 #----Function Definitions----#
 def blink(n=5,time=1):
@@ -69,7 +66,7 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 def base36decode(number):
     return int(number, 36)
             
-def sendMessage(message, verbose=False):
+def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORLD', verbose=False):
     """
     Sends a message from the user
     message = the message to be transmitted as a string
@@ -79,28 +76,53 @@ def sendMessage(message, verbose=False):
     if len(length) == 1:
         length = "0" + length
     message = translator.mess2Trans(message);
-    subheader = origin + dest + func + length;
+    subheader = origin + destination + function + length;
     subheader = translator.mess2Trans(subheader);
     LAN_trans = subheader + message;
 
     #Assemble start code, group code, and end code to be sent at standard speed
-    g_c = translator.mess2Trans(group_code)
-    STD_trans_start = header_pulse + g_c;
+    STD_trans_start = header_pulse;
     STD_trans_stop = stop_pulse;
     
     if verbose:
         print("Transmitting message...");
-        print("Your packaged message: " + translator.trans2Mess(g_c + LAN_trans))
+        print("Your packaged message: " + translator.trans2Mess(LAN_trans))
         print("Your message as transmitted:")
-        print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
-        print(STD_trans_start);
-        print("Sent at group speed of " + str(1/blink_time) + " dots per second:");
         print(LAN_trans);
-        #print("Sent at standard speed of " + str(one_baud*blink_time) + " dots per second:")
-        print(STD_trans_stop);
-    transmit(STD_trans_start, one_baud*blink_time);
-    transmit(LAN_trans, blink_time);
-    transmit(STD_trans_stop, blink_time);
+    trials = 0
+    while trials < 3:
+        trials += 1;
+        while True:
+            packet = catchPacket([False,0],True,(1+uniform(0.4,0.6)))
+            if packet == None:
+                break
+        transmit(STD_trans_start, blink_time);
+        transmit(LAN_trans, blink_time);
+        transmit(STD_trans_stop, blink_time);
+        print("Done")
+        wasReceived = receiveAck(destination);
+        if wasReceived:
+            return True
+        else:
+            print("Ack not received.")
+
+    return False
+
+def receiveAck(destination):
+    initialPacket = [False,1]
+    #Catch whitespace before ack
+    currentPacket = catchPacket(initialPacket,True,1)
+    if currentPacket == None: #If no ack received return False
+        return False
+    #Catch start sequence and determine pulse width
+    initialPacket = [True,2]
+    pulse_width = catchStartSequence(initialPacket)
+    ack = catchAck([True,2],pulse_width)
+    if ack == destination:
+        return True
+    else:
+        return False
+
 
 def transmit(trans,time):
     """
