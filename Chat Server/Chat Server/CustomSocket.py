@@ -97,7 +97,7 @@ class CustomSocket:
 		# Assemble MAC package
 			# First check to see if the MAC of the recieving IP is known, if not address message to router
 		if macDict[to_ip_addr] is not None: mac_to = macDict[to_ip_addr];
-		else mac_to = macDict['router_mac'];
+		else: mac_to = macDict['router_mac'];
 			# Then assemble the remainder of the MAC package
 		mac_from = my_mac;
 		mac_length = t.base36encode(len(ip_package));	# Does the base36 encode auto encode to 2 characters? If not, this needs to be done here.
