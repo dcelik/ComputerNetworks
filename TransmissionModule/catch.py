@@ -121,7 +121,7 @@ def catchAck(initialPacket,pulse_width):
     """
     ack = ""
     binary = ""
-    while len(ack) < 2:
+    while len(ack) < 1:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
@@ -154,7 +154,7 @@ def catchHeader(initialPacket, pulse_width):
     """
     header = ""
     binary = ""
-    while len(header) < 7:
+    while len(header) < 4:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)

@@ -66,19 +66,23 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 def base36decode(number):
     return int(number, 36)
             
-def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORLD', verbose=False):
+def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD', verbose=False):
     """
     Sends a message from the user
     message = the message to be transmitted as a string
     """
+    #Guardian against improper input
+    if len(destinationMAC) != 1 or len(sourceMAC) != 1 or len(payload) < 7:
+        return None
+    
     #Assemble LAN message to be sent at group speed
-    length = str(base36encode(len(message))); #Length is measured in transmission characters
+    length = str(base36encode(len(payload))); #Length is measured in transmission characters
     if len(length) == 1:
         length = "0" + length
-    message = translator.mess2Trans(message);
-    subheader = origin + destination + function + length;
-    subheader = translator.mess2Trans(subheader);
-    LAN_trans = subheader + message;
+    payload_transmission = translator.mess2Trans(payload);
+    MAC_header = destinationMAC + sourceMAC + length;
+    MAC_header_transmission = translator.mess2Trans(MAC_header);
+    LAN_trans = MAC_header_transmission + payload_transmission;
 
     #Assemble start code, group code, and end code to be sent at standard speed
     STD_trans_start = header_pulse;
@@ -100,7 +104,7 @@ def sendMessage(origin='I0', destination='I1', function='A', message='HELLO WORL
         transmit(LAN_trans, blink_time);
         transmit(STD_trans_stop, blink_time);
         print("Done")
-        wasReceived = receiveAck(destination);
+        wasReceived = receiveAck(destinationMAC);
         if wasReceived:
             return True
         else:

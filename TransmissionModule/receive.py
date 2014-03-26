@@ -26,17 +26,16 @@ def receiveMessage():
                         print(currentPacket)
                         break
 
-                origin = header[0:2]
-                destination = header[2:4]
-                function = header[4]
-                length = base36decode(header[5:])
-                print("Header: " + header[0:5] + " " + str(length))
-                print("Message received:")
+                destinationMAC = header[0]
+                sourceMAC = header[1]
+                length = base36decode(header[2:])
+                print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length))
+                print("Payload received:")
                 print(message[1:-1])
                 if len(message[1:-1]) == length:
                         print("Message received. Sending ack.")
-                        sendAck(destination)
-                        return [origin,destination,function,length, message[:-1]]
+                        sendAck(destinationMAC)
+                        return [destinationMAC,sourceMAC,length, message[:-1]]
         return False #if in three trials, the message could not be received, return False.
 
 
