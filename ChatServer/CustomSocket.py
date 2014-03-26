@@ -1,6 +1,7 @@
 import sys
 import os
 import thread
+sys.path.insert(0,os.join(os.getcwd(), os.pardir()); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
 
 class CustomSocket:
@@ -41,15 +42,14 @@ class CustomSocket:
 			self.validFamilyAndProtocol = True;
 			self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
 			#Setup a path to the morsecode send recieve functions
-			path = os.join(os.getcwd(), os.pardir(), os.pardir(), "Working Code"); # Still needs to be built out to main and transmit
+			path = os.join(os.getcwd(), os.pardir(), "TransmissionModule");
+			sys.path.insert(0,path);
 
 			# Import sending related functions
-			sys.path.insert(0, os.join(path,"Sending"));
 			import transmit as t;
 
 			#  Import recieving related functions
-			sys.path.insert(0, os.join(path,"Receiving"));
-			import queuedMonitor as r;
+			import monitor as r;
 
 
 	def bind(self, address):
@@ -97,7 +97,7 @@ class CustomSocket:
 		# Assemble MAC package
 			# First check to see if the MAC of the recieving IP is known, if not address message to router
 		if macDict[to_ip_addr] is not None: mac_to = macDict[to_ip_addr];
-		else: mac_to = macDict['router_mac'];
+		else: mac_to = macDict['router_mac'];	# This only works if you're not the router...
 			# Then assemble the remainder of the MAC package
 		mac_from = my_mac;
 		mac_length = t.base36encode(len(ip_package));	# Does the base36 encode auto encode to 2 characters? If not, this needs to be done here.
@@ -107,11 +107,13 @@ class CustomSocket:
 		# Send the message
 		t.sendMessage(mac_package);
 
-	def recvfrom(self, buflen):
-		""" Checks the threaded monitoring function to see if any messages have been recorded. 
-			Then it checks to see if the message is addressed to this MAC, IP, and port and returns
-			if it is. In the process it records the MAC address of the sending computer into a dict
-			for future use.
+	def baseRecv(self, buflen):
+		""" 
+		Checks the threaded monitoring function to see if any messages have been recorded. 
+		Then it checks to see if the message is addressed to this MAC, IP, and port and returns
+		if it is. In the process it records the MAC address of the sending computer into a dict
+		for future use. Returns the message with all recorded header data for further processing.
+
 		"""
 
 		# Attempts to retrieve a message from the queue initilized in bind, returns None if there are no messages
@@ -127,29 +129,66 @@ class CustomSocket:
 		mac_header = header[:4]; #Is this true? MAC: 1 char to, 1 char from, 2 char base36 len
 		header = header[4:];
 		mac_to = mac_header[0];
-		mac_from = mac_header[1];
+
+		ip_header = header[:7];
+		header = header[7:];
+
+		udp_header = header;
 
 		# If the message is not addressed to this computer's MAC, discard the message
 		if mac_to != self.my_mac: return None;
 
-		ip_header = header[:7];
-		header = header[7:];
-		ip_from = ip_header[1];
+		
 
-		# If the message is not addressed to this computer's IP, discard the message (should be redudant with MAC)
-		if ip_from != self.my_ip_addr: return None;
+		if (buflen<len(message)): return None;
+		else: return message, mac_header, ip_header, udp_header;
 
-		udp_header = header;
-		udp_to = udp_header[0];
-		udp_from = udp_header[1];
+	def recvfrom(self, buflen):
+		""" The recieve function to be used by standard applications. """
 
-		# Add the MAC to the MAC dictionary if it is not already recorded.
-		if macDict[ip_from] is None: macDict[ip_from] = mac_from;
+		data = baseRecv(buflen);
+		if data is not None:
+			message = data[0];
+			mac_header = data[1];
+			ip_header = data[2];
+			udp_header = data[3];
 
-		# If the message is not addressed to this application's port, discard the message
-		if udp_to != self.my_port: return None;
+			udp_to = udp_header[0];
+			mac_from = mac_header[1];
+			ip_from = ip_header[1];
+			udp_from = udp_header[1];
 
-		if (buflen>len(message)):
-			return message, (ip_from,udp_from);  
 
-		return "Message has exceeded buffer length!",(from_ip_addr,from_port);
+			# Add the MAC to the MAC dictionary if it is not already recorded.
+			if macDict[ip_from] is None: macDict[ip_from] = mac_from;
+
+			# If the message is not addressed to this computer's IP, discard the message (should be redudant with MAC)
+			if ip_to != self.my_ip_addr: return None;
+
+			# If the message is not addressed to this application's port, discard the message
+			if udp_to != self.my_port: return None;
+
+			return message, (ip_from,udp_from); 
+		else: return None;
+
+	def routerRecvFrom(self, buflen):
+		""" 
+		Uses the same code as the recieve function, but returns additional data for use
+		by the router.
+
+		"""
+
+		data = baseRecv(buflen);
+		if data is not None:
+			message = data[0];
+			mac_header = data[1];
+			ip_header = data[2];
+			udp_header = data[3];
+
+			ip_to = ip_header[0];
+			ip_from = ip_header[1];
+			udp_to = udp_header[0];
+			udp_from = udp_header[1];
+
+			return message, (ip_from,udp_from) ,(ip_to,udp_to); 
+		else: return None;
