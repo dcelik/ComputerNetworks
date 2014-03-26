@@ -2,11 +2,14 @@
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
 import CustomSockets    
 
-            
+           
 class CN_RouterSender(object):
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
     
-    
+    team = 'I'
+    mac = 'R'
+    router_address = '0.0.{}.{}'.format(team,mac)
+
     def __init__(self,Server_Address=("127.0.0.1",5280)):
 
         socket, msocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CustomSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
@@ -26,11 +29,18 @@ class CN_RouterSender(object):
                 while True:
                     try:
                         # Receive Messages from LAN
-                        bytearraymsg_to_send, address = msocket.recvfrom(1024)
-                        source_IP, source_port = address
+                        bytearraymsg_to_send, source_address, destination_address = msocket.routerRecvfrom(1024) # special router recvfrom function
+                        source_IP, source_port = source_address
+                        destination_IP, destination_port = destination_address
 
-                        # ENTER PSEUDOCODE
-                        
+                        # destination_IP example: IA, where I is team, A is mac
+                        destination_team, destination_mac = destination_IP
+
+                        if self.team == destination_team:
+                            # use msock to route to own team 
+                        else:
+                            # use sock to route to other team
+
                     except:
 
                     if not str_message_to_send:
