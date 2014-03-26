@@ -7,7 +7,12 @@ Purpose: To provide commonly used functions to classes
 Status: Tested and Working 2-13-14
 
 """
-
+def calc_checksum(s):
+    checksum = 0
+    for c in s:
+        checksum += ord(c)
+    checksum = -(checksum % 256)
+    return '%2X' % (checksum % 0xFF)
 
 def trimZeros(data):
     """

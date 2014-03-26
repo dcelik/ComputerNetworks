@@ -154,7 +154,7 @@ def catchHeader(initialPacket, pulse_width):
     """
     header = ""
     binary = ""
-    while len(header) < 4:
+    while len(header) < 6:
         currentPacket = catchPacket(initialPacket)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)

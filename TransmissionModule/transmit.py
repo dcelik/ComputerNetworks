@@ -15,6 +15,7 @@ import translator as translator
 import variables as variables
 from catch import *
 from random import uniform
+from utilities import calc_checksum
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -81,6 +82,8 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
         length = "0" + length
     payload_transmission = translator.mess2Trans(payload);
     MAC_header = destinationMAC + sourceMAC + length;
+    checksum = calc_checksum(MAC_header + payload);
+    MAC_header += checksum;
     MAC_header_transmission = translator.mess2Trans(MAC_header);
     LAN_trans = MAC_header_transmission + payload_transmission;
 

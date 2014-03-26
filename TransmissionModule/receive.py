@@ -2,6 +2,7 @@ from catch import *
 from transmit import transmit
 import translator as translator
 from variables import blink_time
+from utilities import calc_checksum
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
@@ -16,7 +17,7 @@ def receiveMessage():
                 initialPacket = [not currentPacket[0],2]
                 #Catch start sequence and determine pulse width
                 pulse_width = catchStartSequence(initialPacket)
-                print(pulse_width)
+                #print(pulse_width)
                 if pulse_width != None:
                         #print("Start sequence received. Listening...")
                         header = catchHeader(initialPacket,pulse_width)
@@ -28,11 +29,12 @@ def receiveMessage():
 
                 destinationMAC = header[0]
                 sourceMAC = header[1]
-                length = base36decode(header[2:])
-                print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length))
+                length = base36decode(header[2:4])
+                checksum = header[4:]
+                print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
                 print("Payload received:")
                 print(message[1:-1])
-                if len(message[1:-1]) == length:
+                if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
                         print("Message received. Sending ack.")
                         sendAck(destinationMAC)
                         return [destinationMAC,sourceMAC,length, message[:-1]]
