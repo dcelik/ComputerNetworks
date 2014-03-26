@@ -121,8 +121,8 @@ class CustomSocket:
 		if data is None:
 			return None; # Not certain if this is the correct return for this...
 		else:
-			message = data[0];
-			header = data[1];
+			message = data[0];	# should header = data[0]?
+			header = data[1];	# should message = data[1]?
 
 		mac_header = header[:4]; #Is this true? MAC: 1 char to, 1 char from, 2 char base36 len
 		header = header[4:];
