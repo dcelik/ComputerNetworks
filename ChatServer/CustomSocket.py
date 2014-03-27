@@ -1,7 +1,7 @@
 import sys
 import os
 import thread
-sys.path.insert(0,os.join(os.getcwd(), os.pardir()); # Add MAC_Identifier location to path
+sys.path.insert(0,os.join(os.getcwd(), os.pardir())); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
 
 class CustomSocket:
