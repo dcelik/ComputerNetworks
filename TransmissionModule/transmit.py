@@ -61,7 +61,8 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     while number != 0:
         number, i = divmod(number, len(alphabet))
         base36 = alphabet[i] + base36
- 
+    if len(base36) == 1:
+        base36 = "0" + base36
     return sign + base36
  
 def base36decode(number):
@@ -78,8 +79,7 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
     
     #Assemble LAN message to be sent at group speed
     length = str(base36encode(len(payload))); #Length is measured in transmission characters
-    if len(length) == 1:
-        length = "0" + length
+
     payload_transmission = translator.mess2Trans(payload);
     MAC_header = destinationMAC + sourceMAC + length;
     checksum = calc_checksum(MAC_header + payload);
