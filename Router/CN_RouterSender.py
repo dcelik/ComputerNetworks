@@ -49,7 +49,7 @@ class CN_RouterSender(object):
                         else:
                             # Route to other team's router over ethernet
                             sock.sendto(bytearray_msg, destination_address)
-                            print ("\n{} byte message routed via ethernet")
+                            print ("\n{} byte message routed via ethernett")
 
                     except timeout:
                         print (".",end="",flush=True)
