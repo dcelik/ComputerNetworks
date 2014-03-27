@@ -26,7 +26,7 @@ class Chat_Server(object):
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
-			sock.settimeout(-1) # No timeout
+			#sock.settimeout(-1) # No timeout
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
 			while True:
 				#Check to see if a message is received within timeout
@@ -51,8 +51,8 @@ class Chat_Server(object):
 							s.relayMessage(message, source_IP);
 
 				#If no message is received within timeout, execute this code
-				except timeout:
-					continue;
+				#except timeout:
+				#	continue;
 				#except KeyboardInterrupt:
 				#	sock.close()
 				#	print("Socket Closed");

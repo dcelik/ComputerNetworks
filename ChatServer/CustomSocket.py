@@ -1,34 +1,33 @@
 import sys
 import os
-import thread
-sys.path.insert(0,os.join(os.getcwd(), os.pardir()); # Add MAC_Identifier location to path
+import _thread
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
 
 class CustomSocket:
-	def __init__(self,family,type,router_mac="T",verbose=False):
+  	# Associate variables with names so they can be retrived by server
+	AF_INET = 2;
+	SOCK_DGRAM = 2;
+	timeout = -1;	
+  
+	def __init__(self,family, protocol, router_mac="T",verbose=False):
 		""" Initialize a CustomSocket instance """
-		# Associate variables with names so they can be retrived by server
-		self.AF_INET = 2;
-		self.SOCK_DGRAM = 2;
-		self.timeout = -1;		
+	
 
 		# Setup booleans to validate that socket is used correctly
 		self.validFamilyAndProtocol = False;
 		self.validIPAndPort = False;
-
 		# Setup MAC Data
-		self.macDict = dict();
-		self.macDict['router_mac']  = router_mac;
 		self.my_mac = MAC.my_ad;
-
+		if my_mac != router_mac:
+        	self.macDict = dict();
+        	self.macDict['router_mac']  = router_mac;
+        
 		self.verbose = verbose;
-		pass;
 
-	def socket(self, family, protocol):
-		""" Set up a socket with the given arguments. """
-
+        # ------ Set Up Family and Protocol ------ #
 		if family!=2:	#AF_INET
-			print("Family not valid!");
+			print("Sorry, this address family is not currently supported!");
 		else:
 			self.family = 2;
 
@@ -41,8 +40,9 @@ class CustomSocket:
 		if protocol==2: 
 			self.validFamilyAndProtocol = True;
 			self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
+            
 			#Setup a path to the morsecode send recieve functions
-			path = os.join(os.getcwd(), os.pardir(), "TransmissionModule");
+			path = os.path.join(os.getcwd(), os.pardir, "TransmissionModule");
 			sys.path.insert(0,path);
 
 			# Import sending related functions
@@ -54,6 +54,8 @@ class CustomSocket:
 
 	def bind(self, address):
 		""" Start a socket listening for messages addressed to the parent class. """
+
+		address = morseToPubIP(address);
 
 		# Returns with error if inputs are invalid
 		if not self.validFamilyAndProtocol:
@@ -70,6 +72,28 @@ class CustomSocket:
 		if self.verbose:
 			print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
 
+	def morseToPubIP(self, address):
+		""" Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
+
+		new_address = address[0].split(".");
+		new_address[4] = address[1];
+        new_address = [int(letter_code) for letter_code in new_address];
+        
+        ip_addr = chr(new_address[2]) + chr(new_address+[3]);
+        port = chr(new_address[4]);
+        
+        return ip_addr, port;
+
+    def pubIPToMorse(self, ip_from_morse, port_from_morse):
+		""" Converts and address in the Morse letter IP and Port to letters for movement up to the app layer. """
+		
+        ip_from_str = "0.0.";
+     	ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
+        port_from_str = str(ord(port_from_morse));
+        
+        return ip_from_str, port_from_str;
+        
+        
 	def settimeout(self, timeout):
 		""" Sets a message timeout: the timeout is currently unused """
 		self.timeout = timeout;
@@ -81,8 +105,6 @@ class CustomSocket:
 			print("Error: Invalid IP and port or socket has not been bound with an IP and port: message not sent!");
 			return;
 
-		
-
 		to_ip_addr = address[0];
 		to_port = address[1];
 		msg = msg.decode("utf-8"); #Convert from bytearray to a string for ease of operation
@@ -91,7 +113,7 @@ class CustomSocket:
 		udp_package = to_port + self.my_port + msg;
 
 		# Assemble IP package
-		ip_header = to_ip_addr + self.my_ip_addr + self.protocol_identifier + t.base36encode(len(udp_package)); # Does the base36 encode auto encode to 2 characters? If not, this needs to be done here.
+		ip_header = to_ip_addr + self.my_ip_addr + self.protocol_identifier + t.base36encode(len(udp_package));
 		ip_package = ip_header + udp_package;
 
 		# Assemble MAC package
@@ -100,12 +122,8 @@ class CustomSocket:
 		else: mac_to = macDict['router_mac'];	# This only works if you're not the router...
 			# Then assemble the remainder of the MAC package
 		mac_from = my_mac;
-		mac_length = t.base36encode(len(ip_package));	# Does the base36 encode auto encode to 2 characters? If not, this needs to be done here.
-		mac_header = mac_to + mac_from + mac_length;
-		mac_package = mac_header + ip_package;
-
 		# Send the message
-		t.sendMessage(mac_package);
+		t.sendMessage(mac_to,mac_from,ip_package);
 
 	def baseRecv(self, buflen):
 		""" 
@@ -123,22 +141,18 @@ class CustomSocket:
 		if data is None:
 			return None; # Not certain if this is the correct return for this...
 		else:
-			message = data[0];	# should header = data[0]?
-			header = data[1];	# should message = data[1]?
+			dest_mac = data[0];
+			source_mac = data[1];
+            length = data[2];
+            payload = data[3];
+            mac_header = dest_mac+source_mac+length;
 
-		mac_header = header[:4]; #Is this true? MAC: 1 char to, 1 char from, 2 char base36 len
-		header = header[4:];
-		mac_to = mac_header[0];
-
-		ip_header = header[:7];
-		header = header[7:];
-
-		udp_header = header;
+		ip_header = payload[:7];
+        udp_header = payload[7:9];
+        message = payload[9:];
 
 		# If the message is not addressed to this computer's MAC, discard the message
-		if mac_to != self.my_mac: return None;
-
-		
+		if dest_mac != self.my_mac: return None;
 
 		if (buflen<len(message)): return None;
 		else: return message, mac_header, ip_header, udp_header;
@@ -168,27 +182,5 @@ class CustomSocket:
 			# If the message is not addressed to this application's port, discard the message
 			if udp_to != self.my_port: return None;
 
-			return message, (ip_from,udp_from); 
-		else: return None;
-
-	def routerRecvFrom(self, buflen):
-		""" 
-		Uses the same code as the recieve function, but returns additional data for use
-		by the router.
-
-		"""
-
-		data = baseRecv(buflen);
-		if data is not None:
-			message = data[0];
-			mac_header = data[1];
-			ip_header = data[2];
-			udp_header = data[3];
-
-			ip_to = ip_header[0];
-			ip_from = ip_header[1];
-			udp_to = udp_header[0];
-			udp_from = udp_header[1];
-
-			return message, (ip_from,udp_from) ,(ip_to,udp_to); 
+			return message, pubIPToMorse(ip_from,udp_from); 
 		else: return None;
