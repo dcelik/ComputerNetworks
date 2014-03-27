@@ -10,9 +10,9 @@ ServerLog = [];
 BannedIPs=[];
 
 #--------Misc Vars--------#
-default_client_port = "";
-server_port = "";
-server_ip = my_ad;
+default_client_port = "69";	# This will beed to change eventually in order to accomodate other networks
+server_port = "69";
+server_ip = "0.0.73.78";
 client_buffer_size = 1024;
 message_per_timeout_limit = 5;
 admin_pw = "nick";

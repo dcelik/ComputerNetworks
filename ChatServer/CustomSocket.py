@@ -5,7 +5,7 @@ sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier lo
 import MAC_Identifier as MAC
 
 class CustomSocket:
-  	# Associate variables with names so they can be retrived by server
+	# Associate variables with names so they can be retrived by server
 	AF_INET = 2;
 	SOCK_DGRAM = 2;
 	timeout = -1;	
@@ -20,12 +20,12 @@ class CustomSocket:
 		# Setup MAC Data
 		self.my_mac = MAC.my_ad;
 		if my_mac != router_mac:
-        	self.macDict = dict();
-        	self.macDict['router_mac']  = router_mac;
-        
+                        self.macDict = dict();
+                        self.macDict['router_mac']  = router_mac;
+	
 		self.verbose = verbose;
 
-        # ------ Set Up Family and Protocol ------ #
+	# ------ Set Up Family and Protocol ------ #
 		if family!=2:	#AF_INET
 			print("Sorry, this address family is not currently supported!");
 		else:
@@ -40,7 +40,7 @@ class CustomSocket:
 		if protocol==2: 
 			self.validFamilyAndProtocol = True;
 			self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
-            
+	    
 			#Setup a path to the morsecode send recieve functions
 			path = os.path.join(os.getcwd(), os.pardir, "TransmissionModule");
 			sys.path.insert(0,path);
@@ -77,23 +77,23 @@ class CustomSocket:
 
 		new_address = address[0].split(".");
 		new_address[4] = address[1];
-        new_address = [int(letter_code) for letter_code in new_address];
-        
-        ip_addr = chr(new_address[2]) + chr(new_address+[3]);
-        port = chr(new_address[4]);
-        
-        return ip_addr, port;
+	new_address = [int(letter_code) for letter_code in new_address];
+	
+	ip_addr = chr(new_address[2]) + chr(new_address+[3]);
+	port = chr(new_address[4]);
+	
+	return ip_addr, port;
 
     def pubIPToMorse(self, ip_from_morse, port_from_morse):
 		""" Converts and address in the Morse letter IP and Port to letters for movement up to the app layer. """
 		
-        ip_from_str = "0.0.";
-     	ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
-        port_from_str = str(ord(port_from_morse));
-        
-        return ip_from_str, port_from_str;
-        
-        
+	ip_from_str = "0.0.";
+	ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
+	port_from_str = str(ord(port_from_morse));
+	
+	return ip_from_str, port_from_str;
+	
+	
 	def settimeout(self, timeout):
 		""" Sets a message timeout: the timeout is currently unused """
 		self.timeout = timeout;
@@ -143,13 +143,13 @@ class CustomSocket:
 		else:
 			dest_mac = data[0];
 			source_mac = data[1];
-            length = data[2];
-            payload = data[3];
-            mac_header = dest_mac+source_mac+length;
+	    length = data[2];
+	    payload = data[3];
+	    mac_header = dest_mac+source_mac+length;
 
 		ip_header = payload[:7];
-        udp_header = payload[7:9];
-        message = payload[9:];
+	udp_header = payload[7:9];
+	message = payload[9:];
 
 		# If the message is not addressed to this computer's MAC, discard the message
 		if dest_mac != self.my_mac: return None;
