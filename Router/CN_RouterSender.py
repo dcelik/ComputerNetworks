@@ -8,64 +8,52 @@ class CN_RouterSender(object):
     
     team = 'I'
     mac = 'R'
-    router_address = '0.0.{}.{}'.format(team,mac)
+    eth_ip = '192.168.100.{}'.format(self.team)
+    morse_ip = '0.0.{}.{}'.format(self.team,self.mac)
 
-    def __init__(self,Server_Address=("127.0.0.1",5280)):
+    def __init__(self,Router_Address=(self.eth_ip,5280)):
 
         socket, msocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CustomSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
-        self.Server_Address = Server_Address
+        self.Router_Address = Router_Address
 
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with msocket(AF_INET,SOCK_DGRAM) as msock:
-
+                
+                sock.bind(self.eth_ip,5280)
                 sock.settimeout(2.0) # 2 second timeout
+                msock.bind(self.morse_ip,5280)  
                 msock.settimeout(2.0) # 2 second timeout
                 
-                print ("UDP_Client started for CN_RouterSender at IP address {} on port {}".format(
-                    Server_Address[0],Server_Address[1])
+                print ("UDP_Sender started for CN_RouterSender at IP address {} on port {}".format(
+                    Router_Address[0],Router_Address[1])
                        )
                 
                 while True:
                     try:
                         # Receive Messages from LAN
-                        bytearraymsg_to_send, source_address, destination_address = msocket.routerRecvfrom(1024) # special router recvfrom function
+                        bytearray_msg, source_address, destination_address = msock.routerRecvfrom(1024) # special router recvfrom function
                         source_IP, source_port = source_address
                         destination_IP, destination_port = destination_address
+
+                        print ("\n{} byte message received from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
+                        print ("\n"+bytearray_msg.decode("UTF-8"))
 
                         # destination_IP example: IA, where I is team, A is mac
                         destination_team, destination_mac = destination_IP
 
                         if self.team == destination_team:
-                            # use msock to route to own team 
+                            # Route to own team over morse net
+                            msock.sendto(bytearray_msg, destination_address)
+                            print ("\n{} byte message routed via morsenet")
                         else:
-                            # use sock to route to other team
+                            # Route to other team's router over ethernet
+                            sock.sendto(bytearray_msg, destination_address)
+                            print ("\n{} byte message routed via ethernett")
 
-                    except:
-
-                    if not str_message_to_send:
-                        break
-                    
-                    sent_bytearray_message = bytearray(str_message_to_send,encoding="UTF-8")
-
-                    bytes_sent = sock.sendto(sent_bytearray_message, self.Server_Address)
-                    
-                    print ("{} bytes sent".format(bytes_sent))
-
-                    address_received = ("a.b.c.d",(-1))
-
-                    while Server_Address != address_received:
-                        try:
-                            bytearray_message_received, address_received = sock.recvfrom(1500)
-                            if address_received != self.Server_Address:
-                                print( "\n message from {} ignored".format(address_received))
-                        except timeout:
-                            print (".",end="",flush=True)
-                            continue
-                    str_message_received = bytearray_message_received.decode("UTF-8")
-                    print ("\n{} bytes received".format(len(bytearray_message_received)))
-                    print ("message received:\n{}".format(str_message_received))
-                
+                    except timeout:
+                        print (".",end="",flush=True)
+                        continue                
                 
 
         print ("UDP_Client ended")
