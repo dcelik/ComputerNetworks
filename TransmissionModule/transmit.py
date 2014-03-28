@@ -47,7 +47,6 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""
     if not isinstance(number, (int)):
         raise TypeError('number must be an integer')
- 
     base36 = ''
     sign = ''
  
@@ -56,13 +55,12 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
         number = -number
  
     if 0 <= number < len(alphabet):
-        return sign + alphabet[number]
+        return sign + '0' + alphabet[number]
  
     while number != 0:
         number, i = divmod(number, len(alphabet))
         base36 = alphabet[i] + base36
-    if len(base36) == 1:
-        base36 = "0" + base36
+        
     return sign + base36
  
 def base36decode(number):
