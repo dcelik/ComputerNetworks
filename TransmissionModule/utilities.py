@@ -12,7 +12,11 @@ def calc_checksum(s):
     for c in s:
         checksum += ord(c)
     checksum = -(checksum % 256)
-    return '%2X' % (checksum % 0xFF)
+    checksum = '%2X' % (checksum % 0xFF)
+    if checksum[0] == ' ' or len(checksum) == 1:
+        return '0' + checksum
+    else:
+        return 
 
 def trimZeros(data):
     """
