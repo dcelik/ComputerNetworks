@@ -49,6 +49,7 @@ def catchPacket(initialPacket,stop=False,stop_time=0):
     flag = False
     currentPacket = initialPacket
     while True:
+        #print(".");
         if currentPacket[0]: #Deal with True packet
             z = takeMeasurement()
             if z and not flag:  
