@@ -1,6 +1,6 @@
 import sys
 import os
-import _thread
+import threading
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
@@ -66,7 +66,9 @@ class CustomSocket:
         self.validIPAndPort = True;
 
         #Starts a monitor function on a new thread that queues messages as they are recieved
-        self.queueingThread = _thread.start_new_thread(r.monitor(),()); #This may cause a memory leak - unsure.
+
+        self.qt = threading.Thread(target=r.monitor);
+        self.qt.start(); #This may cause a memory leak - unsure.
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
