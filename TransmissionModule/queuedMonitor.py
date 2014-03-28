@@ -1,4 +1,5 @@
 import queue as q
+import RPi.GPIO as GPIO
 from receive import receiveMessage
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -10,6 +11,6 @@ def popMessage():
 		return messageList.get();
 	else:
 		return None;
-
-while True:
-        messageList.put(receiveMessage())
+def monitor():
+	while True:
+        	messageList.put(receiveMessage())

@@ -3,6 +3,11 @@ import os
 import _thread
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
+import transmit as t;
+import queuedMonitor as r;
+
+
 
 class CustomSocket:
     # Associate variables with names so they can be retrived by server
@@ -10,7 +15,7 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family, protocol, router_mac="T",verbose=False):
+    def __init__(self,family, protocol, router_mac="T",verbose=False, test_init=True):
         """ Initialize a CustomSocket instance """
     
 
@@ -19,7 +24,7 @@ class CustomSocket:
         self.validIPAndPort = False;
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
-        if my_mac != router_mac:
+        if self.my_mac != router_mac:
             self.macDict = dict();
             self.macDict['router_mac']  = router_mac;
     
@@ -41,21 +46,15 @@ class CustomSocket:
             self.validFamilyAndProtocol = True;
             self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
         
-            #Setup a path to the morsecode send recieve functions
-            path = os.path.join(os.getcwd(), os.pardir, "TransmissionModule");
-            sys.path.insert(0,path);
-
-            # Import sending related functions
-            import transmit as t;
-
-            #  Import recieving related functions
-            import monitor as r;
 
 
+        if test_init: self.bind(("0.0.73.73","69"));
+
+        
     def bind(self, address):
         """ Start a socket listening for messages addressed to the parent class. """
 
-        address = morseToPubIP(address);
+        address = self.morseToPubIP(address);
 
         # Returns with error if inputs are invalid
         if not self.validFamilyAndProtocol:
@@ -67,23 +66,12 @@ class CustomSocket:
         self.validIPAndPort = True;
 
         #Starts a monitor function on a new thread that queues messages as they are recieved
-        self.queueingThread = thread.start_new_thread(r.monitor(),()); #This may cause a memory leak - unsure.
+        self.queueingThread = _thread.start_new_thread(r.monitor(),()); #This may cause a memory leak - unsure.
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
 
-    def morseToPubIP(self, address):
-        """ Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
-
-        new_address = address[0].split(".");
-        new_address[4] = address[1];
-        new_address = [int(letter_code) for letter_code in new_address];
     
-        ip_addr = chr(new_address[2]) + chr(new_address+[3]);
-        port = chr(new_address[4]);
-    
-        return ip_addr, port;
-
     def pubIPToMorse(self, ip_from_morse, port_from_morse):
         """ Converts and address in the Morse letter IP and Port to letters for movement up to the app layer. """
                 
@@ -93,6 +81,17 @@ class CustomSocket:
         
         return ip_from_str, port_from_str;
     
+    def morseToPubIP(self, address):
+        """ Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
+
+        new_address = address[0].split(".");
+        new_address.append(address[1]);
+        new_address = [int(letter_code) for letter_code in new_address];
+    
+        ip_addr = chr(new_address[2]) + chr(new_address[3]);
+        port = chr(new_address[4]);
+    
+        return ip_addr, port;
     
     def settimeout(self, timeout):
         """ Sets a message timeout: the timeout is currently unused """
