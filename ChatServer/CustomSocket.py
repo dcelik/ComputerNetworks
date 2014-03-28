@@ -54,7 +54,7 @@ class CustomSocket:
     def bind(self, address):
         """ Start a socket listening for messages addressed to the parent class. """
 
-        address = self.morseToPubIP(address);
+        address = self.pubIPToMorse(address);
 
         # Returns with error if inputs are invalid
         if not self.validFamilyAndProtocol:
@@ -69,21 +69,24 @@ class CustomSocket:
 
         self.qt = threading.Thread(target=r.monitor);
         self.qt.start(); #This may cause a memory leak - unsure.
+        self.sendto('test'.encode(), ('0.0.73.73','69'));
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
 
     
-    def pubIPToMorse(self, ip_from_morse, port_from_morse):
+    def morseToPubIP(self, address):
         """ Converts and address in the Morse letter IP and Port to letters for movement up to the app layer. """
-                
+        ip_from_morse = address[0];
+        port_from_morse = address[1];
+        
         ip_from_str = "0.0.";
         ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
         port_from_str = str(ord(port_from_morse));
         
         return ip_from_str, port_from_str;
     
-    def morseToPubIP(self, address):
+    def pubIPToMorse(self, address):
         """ Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
 
         new_address = address[0].split(".");
@@ -102,6 +105,8 @@ class CustomSocket:
     def sendto(self,msg,address):
         """ Assembles a message and sends it with the down-stack implementation. """
 
+        address = self.pubIPToMorse(address);
+        
         if not self.validIPAndPort:
             print("Error: Invalid IP and port or socket has not been bound with an IP and port: message not sent!");
             return;
@@ -119,10 +124,10 @@ class CustomSocket:
 
         # Assemble MAC package
             # First check to see if the MAC of the recieving IP is known, if not address message to router
-        if macDict[to_ip_addr] is not None: mac_to = macDict[to_ip_addr];
-        else: mac_to = macDict['router_mac'];   # This only works if you're not the router...
+        if to_ip_addr in self.macDict: mac_to = self.macDict[to_ip_addr];
+        else: mac_to = self.macDict['router_mac'];   # This only works if you're not the router...
             # Then assemble the remainder of the MAC package
-        mac_from = my_mac;
+        mac_from = self.my_mac;
         # Send the message
         t.sendMessage(mac_to,mac_from,ip_package);
 
@@ -175,7 +180,7 @@ class CustomSocket:
 
 
             # Add the MAC to the MAC dictionary if it is not already recorded.
-            if macDict[ip_from] is None: macDict[ip_from] = mac_from;
+            if ip_from in self.macDict: self.macDict[ip_from] = mac_from;
 
             # If the message is not addressed to this computer's IP, discard the message (should be redudant with MAC)
             if ip_to != self.my_ip_addr: return None;
