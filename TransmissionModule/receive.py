@@ -34,6 +34,8 @@ def receiveMessage():
                 print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
                 print("Payload received:")
                 print(message[1:-1])
+                print("Calculated length: " + str(len(message[1:-1])))
+                print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
                         print("Message received. Sending ack.")
                         sendAck(destinationMAC)
