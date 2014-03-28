@@ -15,7 +15,7 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family, protocol, router_mac="T",verbose=False, test_init=True):
+    def __init__(self,family, protocol, router_mac="T",verbose=False, debug=False):
         """ Initialize a CustomSocket instance """
     
 
@@ -29,6 +29,7 @@ class CustomSocket:
             self.macDict['router_mac']  = router_mac;
     
         self.verbose = verbose;
+        self.debug = debug;
 
     # ------ Set Up Family and Protocol ------ #
         if family!=2:   #AF_INET
@@ -48,7 +49,8 @@ class CustomSocket:
         
 
 
-        if test_init: self.bind(("0.0.73.73","69"));
+        if self.debug:
+            self.bind(("0.0.73.73","69"));
 
         
     def bind(self, address):
@@ -69,7 +71,7 @@ class CustomSocket:
 
         self.qt = threading.Thread(target=r.monitor);
         self.qt.start(); #This may cause a memory leak - unsure.
-        self.sendto('test'.encode(), ('0.0.73.73','69'));
+        if self.debug: self.sendto('test'.encode(), ('0.0.73.73','69'));
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
