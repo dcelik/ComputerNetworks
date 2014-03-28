@@ -13,7 +13,9 @@ def calc_checksum(s):
         checksum += ord(c)
     checksum = -(checksum % 256)
     checksum = '%2X' % (checksum % 0xFF)
-    if checksum[0] == ' ' or len(checksum) == 1:
+    if checksum[0] == ' ':
+        return '0' + checksum[1:]
+    elif len(checksum) == 1:
         return '0' + checksum
     else:
         return 
