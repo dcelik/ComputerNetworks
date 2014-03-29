@@ -2,14 +2,14 @@ from GlobalVars import default_client_port
 
 class User:
 
-    def __init__(self, alias):
+    def __init__(self, alias, port=default_client_port):
         self.alias = alias;
         self.isInvisible = False;
         self.isAdmin = False;
     
         self.messagesInTimeout=0;
         self.timeSinceActive=0;
-        self.port = default_client_port
+        self.port = port
 
     def toggleAdmin(self):
         self.isAdmin = not self.isAdmin;

@@ -1,5 +1,3 @@
-from MAC_Identifier import my_ad
-
 #--------Commands--------#
 command_symbol = "/";
 
@@ -10,7 +8,7 @@ ServerLog = [];
 BannedIPs=[];
 
 #--------Misc Vars--------#
-default_client_port = "69";	# This will beed to change eventually in order to accomodate other networks
+default_client_port = "ERROR: PORT NOT ASSIGNED";
 server_port = "69";
 server_ip = "0.0.73.78";
 client_buffer_size = 1024;

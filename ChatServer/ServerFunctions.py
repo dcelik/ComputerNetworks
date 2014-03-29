@@ -1,11 +1,14 @@
 """ Server Initiated Functions """
 import GlobalVars as g
-import CN_Sockets
+import CustomSocket as cs
 
-def sendMessage(message, dest_IP):
+def sendMessage(message, dest_IP, source_port = g.default_client_port):
     """ Sends a message to the destination IP """
-    Server_Address=(dest_IP,g.default_client_port)
-    socket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
+
+    if source_IP in g.Users: port = g.Users[source_IP].port;
+
+    Server_Address=(dest_IP,source_port)
+    socket, AF_INET, SOCK_DGRAM = cs.socket, cs.AF_INET, cs.SOCK_DGRAM
     with socket(AF_INET,SOCK_DGRAM) as sock:
         #Check if string is actually a list and parse if so
         if isinstance(message,list):

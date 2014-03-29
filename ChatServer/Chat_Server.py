@@ -46,7 +46,7 @@ class Chat_Server(object):
 					else:
 						#If the user is not logged in, force them to log in
 						if g.Users.get(source_IP) is None:
-							s.requestConnect(source_IP);
+							s.requestConnect(source_IP, source_port);
 						else:
 							s.relayMessage(message, source_IP);
 

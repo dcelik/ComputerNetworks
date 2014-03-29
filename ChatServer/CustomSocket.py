@@ -1,6 +1,7 @@
 import sys
 import os
 import _thread
+import GlobalVars as g
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
 
@@ -10,13 +11,17 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family, protocol, router_mac="T",verbose=False):
+    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False):
         """ Initialize a CustomSocket instance """
     
 
         # Setup booleans to validate that socket is used correctly
         self.validFamilyAndProtocol = False;
         self.validIPAndPort = False;
+
+        # Default bind to simulate the ability of the kernel to generate these at runtime if unbound
+        self.bind((g.server_ip,g.server_port));
+        
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
         if my_mac != router_mac:
@@ -52,7 +57,7 @@ class CustomSocket:
             import monitor as r;
 
 
-    def bind(self, address):
+    def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """
 
         address = morseToPubIP(address);
