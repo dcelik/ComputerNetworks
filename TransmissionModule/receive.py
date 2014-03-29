@@ -3,8 +3,13 @@ from transmit import transmit
 import translator as translator
 from variables import blink_time
 from utilities import calc_checksum
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
+import MAC_Identifier as MAC
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
+myMAC = MAC.my_ad
 
 def receiveMessage():
         trials = 0
@@ -37,8 +42,9 @@ def receiveMessage():
                 print("Calculated length: " + str(len(message[1:-1])))
                 print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
-                        print("Message received. Sending ack.")
-                        sendAck(destinationMAC)
+                        if destinationMAC == myMAC:
+                                print("Message received. Sending ack.")
+                                sendAck(destinationMAC)
                         return [destinationMAC,sourceMAC,length, message[:-1]]
         return False #if in three trials, the message could not be received, return False.
 
