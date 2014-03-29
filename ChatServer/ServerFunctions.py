@@ -2,12 +2,12 @@
 import GlobalVars as g
 import CustomSocket as cs
 
-def sendMessage(message, dest_IP, source_port = g.default_client_port):
+def sendMessage(message, dest_IP, dest_port = g.default_client_port):
     """ Sends a message to the destination IP """
 
-    if source_IP in g.Users: port = g.Users[source_IP].port;
+    if dest_IP in g.Users: port = g.Users[dest_IP].port;
 
-    Server_Address=(dest_IP,source_port)
+    Server_Address=(dest_IP,dest_port)
     socket, AF_INET, SOCK_DGRAM = cs.socket, cs.AF_INET, cs.SOCK_DGRAM
     with socket(AF_INET,SOCK_DGRAM) as sock:
         #Check if string is actually a list and parse if so
@@ -28,10 +28,10 @@ def serverWelcome(dest_IP):
         sendMessage("Welcome. You are logged in as " + g.Users[dest_IP].alias + ". Enter " +
                     "\\help to see available commands.", dest_IP);
 
-def requestConnect(dest_IP):
+def requestConnect(dest_IP, dest_port):
         """ Sends a message to the destination IP requesting a login """
         message = "Please enter a name for yourself by responding in the format: \\connect name"
-        sendMessage(message, dest_IP)
+        sendMessage(message, dest_IP, dest_port)
 
 def relayMessage(message, source_IP):
         """ Relays a message to all users """

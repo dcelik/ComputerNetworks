@@ -6,7 +6,7 @@ import User as u
 Commands = {"set_name": "setName", "disp_users": "users", "get_help": "help", "connect": "connect","disconnect": "disconnect", "admin": "admin"}
 
 #------------User Accessible Commands/Command Parsing------------#
-def parseCommandString(message, source_IP):
+def parseCommandString(message, source_IP, source_port):
 	""" Given a command message, calls the corresponding function and passes any arguments """
 	#TODO: Move all user commands to a seperate class
 	if message is not None and not message=="":
@@ -20,7 +20,7 @@ def parseCommandString(message, source_IP):
 
 	#Only allow logged in users to execute commands other than \connect
 	if not source_IP in g.Users and not command==Commands['connect']:
-		s.requestConnect(source_IP);
+		s.requestConnect(source_IP, source_port);
 		return;
 
 	if command in a.AdminCommands:
@@ -39,9 +39,9 @@ def parseCommandString(message, source_IP):
 			s.sendMessage("Invalid input. Please enter a valid name in format \\setName [name]",source_IP);
 	elif command == Commands['connect']:
 		if argument is not None:
-			connect(argument, source_IP);
+			connect(argument, source_IP, source_port);
 		else:
-			s.sendMessage("Invalid input. Please enter a valid name in format \\connect [name]",source_IP);
+			s.sendMessage("Invalid input. Please enter a valid name in format \\connect [name]",source_IP,source_port);
 	elif command == Commands['admin']:
 		if argument is not None:
 		       admin(argument, source_IP);
@@ -54,7 +54,7 @@ def parseCommandString(message, source_IP):
 	elif command == Commands['get_help']:
 		sendHelp(source_IP);
 	else:
-		s.sendMessage("Invalid command.", source_IP);
+		s.sendMessage("Invalid command.", source_IP, source_port);
 		
 
 def admin(pw, source_IP):
@@ -71,14 +71,14 @@ def invisible(source_IP):
 	s.sendMessage(g.Users[source_IP].toggleInvisible(),source_IP);
 
 		
-def connect(name, source_IP):
+def connect(name, source_IP, source_port):
 	""" Creates a new user session """
 	if g.Users.get(source_IP) is not None:
 		renewConnection(source_IP);
 	elif source_IP in g.BannedIPs:
-	    s.sendMessage("You are currently banned from the server.",source_IP);
+	    s.sendMessage("You are currently banned from the server.",source_IP,source_port);
 	elif not name in g.IPs.keys():
-		g.Users[source_IP] = u.User(name);
+		g.Users[source_IP] = u.User(name, source_port);
 		g.IPs[name] = source_IP;
 		s.serverWelcome(source_IP);
 	else:

@@ -2,7 +2,8 @@ import RPi.GPIO as GPIO
 import time as time
 from variables import *
 global test
-
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
 #allPackets = [];
 
 # The means of testing it without a pi
@@ -32,15 +33,13 @@ global test
 ##    
 ##    return ct<CUTOFF
 
-def takeMeasurement():
-    S = 0.001
-    GPIO.setup(12,GPIO.OUT)
-    GPIO.output(12,GPIO.LOW)
-    #time.sleep(S)
-    GPIO.setup(12,GPIO.IN)
-    return bool(GPIO.input(12))
+def takeMeasurement(pin):
+    GPIO.setup(pin,GPIO.OUT)
+    GPIO.output(pin,GPIO.LOW)
+    GPIO.setup(pin,GPIO.IN)
+    return bool(GPIO.input(pin))
 
-def catchPacket(initialPacket,stop=False,stop_time=0):
+def catchPacket(initialPacket,sending=False,stop_time=0):
     """
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
@@ -49,8 +48,10 @@ def catchPacket(initialPacket,stop=False,stop_time=0):
     flag = False
     currentPacket = initialPacket
     while True:
+        #print(".");
         if currentPacket[0]: #Deal with True packet
-            z = takeMeasurement()
+            if not sending: z = takeMeasurement(12)
+            if sending: z = takeMeasurement(16)
             if z and not flag:  
                 currentPacket = [True,currentPacket[1]+1]
             elif z and flag:
@@ -64,7 +65,8 @@ def catchPacket(initialPacket,stop=False,stop_time=0):
                 return currentPacket
 
         else: #Deal with False packet
-            z = takeMeasurement()
+            if not sending: z = takeMeasurement(12)
+            if sending: z = takeMeasurement(16)
             if not z and not flag:  
                 currentPacket = [False,currentPacket[1]+1]
             elif not z and flag:
@@ -76,15 +78,9 @@ def catchPacket(initialPacket,stop=False,stop_time=0):
                 #print(currentPacket)
                 #allPackets.append(currentPacket)
                 return currentPacket
-            if stop and time.time() >= (start_time+stop_time):
+            if sending and time.time() >= (start_time+stop_time):
                 return None
         
-##def catchPacket(initialPacket):
-##    """ This is the test function """
-##    global test
-##    test += 1
-##    if test < len(testPackets):
-##        return testPackets[test]
 
 def cleanPacket(packet,pulse_width):
     """

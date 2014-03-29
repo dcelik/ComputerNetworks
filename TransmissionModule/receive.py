@@ -1,12 +1,26 @@
+import sys
+import os
 from catch import *
 from transmit import transmit
 import translator as translator
 from variables import blink_time
 from utilities import calc_checksum
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
+import MAC_Identifier as MAC
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
+
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
+myMAC = MAC.my_ad
 
 def receiveMessage():
+        """
+
+        returns: [destinationMAC, sourceMAC,length, ipheader_udpheader_msg]
+
+        where ipheader_udpheader_msg = ipheader + udpheader + msg
+        """
+
         trials = 0
         while trials < 3:
                 trials += 1
@@ -34,10 +48,14 @@ def receiveMessage():
                 print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
                 print("Payload received:")
                 print(message[1:-1])
+                print("Calculated length: " + str(len(message[1:-1])))
+                print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
-                        print("Message received. Sending ack.")
-                        sendAck(destinationMAC)
-                        return [destinationMAC,sourceMAC,length, message[:-1]]
+                        if destinationMAC == myMAC:
+                                print("Message received. Sending ack.")
+                                sendAck(destinationMAC)
+                        ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
+                        return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg] 
         return False #if in three trials, the message could not be received, return False.
 
 
