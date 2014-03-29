@@ -1,3 +1,5 @@
+import sys
+import os
 from catch import *
 from transmit import transmit
 import translator as translator
