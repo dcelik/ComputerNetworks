@@ -4,9 +4,9 @@ import CustomSockets
 class CN_RouterReceiver(object):
     
     team = 'I'
-    mac = 'R'
-    eth_ip = '192.168.100.{}'.format(self.team)
-    morse_ip = '0.0.{}.{}'.format(self.team,self.mac)
+    mac = 'T'
+    eth_ip = '192.168.100.{}'.format(chr(self.team))
+    morse_ip = '0.0.{}.{}'.format(chr(self.team),chr(self.mac))
     """ Should a Routing Table be added?
     rt_table = {'II':(Ian's IP, Ian's Port),
                  'IN':(Nick's IP, Nick's Port),
@@ -14,7 +14,7 @@ class CN_RouterReceiver(object):
                 }
     """
     
-    def __init__(self,Router_Address=(self.eth_ip,5280)):
+    def __init__(self,Router_Address=(self.eth_ip,73)):
 
         socket, msocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CustomSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
@@ -23,9 +23,9 @@ class CN_RouterReceiver(object):
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with msocket(AF_INET,SOCK_DGRAM) as msock:
                 
-                sock.bind(self.eth_ip,5280)
+                sock.bind(self.eth_ip,73)
                 sock.settimeout(2.0) # 2 second timeout
-                msock.bind(self.morse_ip,5280)  
+                msock.bind(self.morse_ip,69)  
                 msock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Receiver started for CN_RouterReceiver at IP address {} on port {}".format(
@@ -44,7 +44,7 @@ class CN_RouterReceiver(object):
                         print ("\n"+bytearray_msg.decode("UTF-8"))
 
                         
-                    """ IF routing table 
+                        """ IF routing table 
                         destination_address = rt_table[destination_address]
                         ENDIF """ 
                         
