@@ -14,6 +14,13 @@ GPIO.setmode(GPIO.BOARD)
 myMAC = MAC.my_ad
 
 def receiveMessage():
+        """
+
+        returns: [destinationMAC, sourceMAC,length, ipheader_udpheader_msg]
+
+        where ipheader_udpheader_msg = ipheader + udpheader + msg
+        """
+
         trials = 0
         while trials < 3:
                 trials += 1
@@ -47,7 +54,8 @@ def receiveMessage():
                         if destinationMAC == myMAC:
                                 print("Message received. Sending ack.")
                                 sendAck(destinationMAC)
-                        return [destinationMAC,sourceMAC,length, message[:-1]]
+                        ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
+                        return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg] 
         return False #if in three trials, the message could not be received, return False.
 
 
