@@ -1,17 +1,20 @@
 
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
-import CustomSockets    
+import RouterSockets    
 
            
 class CN_RouterSender(object):
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
     
-    team = 'I'
-    mac = 'R'
-    eth_ip = '192.168.100.{}'.format(self.team)
-    morse_ip = '0.0.{}.{}'.format(self.team,self.mac)
+    group = 'I'
+    mac = 'T'
+    
+    router_eth_ip = {"I":"192.168.100.73",
+                     "E":"192.168.100.50",
+                     "T":"192.168.100.84"
+                    }
 
-    def __init__(self,Router_Address=(self.eth_ip,5280)):
+    def __init__(self,Router_Address=(self.router_eth_ip[self.group],73)):
 
         socket, msocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CustomSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
@@ -20,9 +23,9 @@ class CN_RouterSender(object):
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with msocket(AF_INET,SOCK_DGRAM) as msock:
                 
-                sock.bind(self.eth_ip,5280)
+                sock.bind(self.eth_ip,73)
                 sock.settimeout(2.0) # 2 second timeout
-                msock.bind(self.morse_ip,5280)  
+                msock.bind(self.morse_ip,69)  
                 msock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Sender started for CN_RouterSender at IP address {} on port {}".format(
@@ -39,17 +42,20 @@ class CN_RouterSender(object):
                         print ("\n{} byte message received from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
                         print ("\n"+bytearray_msg.decode("UTF-8"))
 
-                        # destination_IP example: IA, where I is team, A is mac
-                        destination_team, destination_mac = destination_IP
+                        # destination_IP example: IA, where I is group, A is mac
+                        destination_group, destination_mac = destination_IP
 
-                        if self.team == destination_team:
-                            # Route to own team over morse net
+                        if self.group == destination_group:
+                            # Route to own group over morsenet
+                            # Address Resloution Protocol
                             msock.sendto(bytearray_msg, destination_address)
                             print ("\n{} byte message routed via morsenet")
                         else:
-                            # Route to other team's router over ethernet
-                            sock.sendto(bytearray_msg, destination_address)
-                            print ("\n{} byte message routed via ethernett")
+                            # Route to other group's router over ethernet
+                            dst_group = "E" # This should be dynamic, NOT hardcoded like it is here
+                            dst_group_router = self.router_eth_ip[dst_group]
+                            sock.sendto(bytearray_msg, dst_group_router)
+                            print ("\n{} byte message routed via ethernet")
 
                     except timeout:
                         print (".",end="",flush=True)
@@ -57,19 +63,3 @@ class CN_RouterSender(object):
                 
 
         print ("UDP_Client ended")
-
-    
-
-
-
-               
-    
-                
-                
-                
-            
-
-
-
-            
-        
