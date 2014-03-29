@@ -2,7 +2,8 @@ import RPi.GPIO as GPIO
 import time as time
 from variables import *
 global test
-
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
 #allPackets = [];
 
 # The means of testing it without a pi
@@ -33,10 +34,8 @@ global test
 ##    return ct<CUTOFF
 
 def takeMeasurement(pin):
-    #S = 0.001
     GPIO.setup(pin,GPIO.OUT)
     GPIO.output(pin,GPIO.LOW)
-    #time.sleep(S)
     GPIO.setup(pin,GPIO.IN)
     return bool(GPIO.input(pin))
 
