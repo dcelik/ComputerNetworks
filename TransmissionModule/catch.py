@@ -33,9 +33,9 @@ global test
 ##    return ct<CUTOFF
 
 def takeMeasurement():
-    S = 0.001
-    GPIO.setup(12,GPIO.OUT)
-    GPIO.output(12,GPIO.LOW)
+    #S = 0.001
+    #GPIO.setup(12,GPIO.OUT)
+    #GPIO.output(12,GPIO.LOW)
     #time.sleep(S)
     GPIO.setup(12,GPIO.IN)
     return bool(GPIO.input(12))

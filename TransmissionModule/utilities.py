@@ -18,7 +18,7 @@ def calc_checksum(s):
     elif len(checksum) == 1:
         return '0' + checksum
     else:
-        return 
+        return checksum
 
 def trimZeros(data):
     """

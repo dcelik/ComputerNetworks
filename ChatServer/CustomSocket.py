@@ -15,7 +15,7 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family, protocol, router_mac="T",verbose=False, debug=False):
+    def __init__(self,family, protocol, router_mac="T",verbose=False, debug=True):
         """ Initialize a CustomSocket instance """
     
 
@@ -47,8 +47,6 @@ class CustomSocket:
             self.validFamilyAndProtocol = True;
             self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
         
-
-
         if self.debug:
             self.bind(("0.0.73.73","69"));
 
@@ -71,7 +69,6 @@ class CustomSocket:
 
         self.qt = threading.Thread(target=r.monitor);
         self.qt.start(); #This may cause a memory leak - unsure.
-        if self.debug: self.sendto('test'.encode(), ('0.0.73.73','69'));
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);
@@ -131,6 +128,7 @@ class CustomSocket:
             # Then assemble the remainder of the MAC package
         mac_from = self.my_mac;
         # Send the message
+        print(mac_to+mac_from+ip_package)
         t.sendMessage(mac_to,mac_from,ip_package);
 
     def baseRecv(self, buflen):
