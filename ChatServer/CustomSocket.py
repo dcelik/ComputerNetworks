@@ -1,5 +1,6 @@
 import sys
 import os
+import GlobalVars as g
 import threading
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
 import MAC_Identifier as MAC
@@ -15,13 +16,16 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family, protocol, router_mac="T",verbose=False, debug=True):
+    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
         """ Initialize a CustomSocket instance """
     
 
         # Setup booleans to validate that socket is used correctly
         self.validFamilyAndProtocol = False;
         self.validIPAndPort = False;
+
+        
+        
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
         if self.my_mac != router_mac:
@@ -46,12 +50,14 @@ class CustomSocket:
         if protocol==2: 
             self.validFamilyAndProtocol = True;
             self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
+
+        # Default bind to simulate the ability of the kernel to generate these at runtime if unbound
+        self.bind((g.server_ip,g.server_port),False);
         
         if self.debug:
             self.bind(("0.0.73.73","69"));
-
         
-    def bind(self, address):
+    def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """
 
         address = self.pubIPToMorse(address);
@@ -66,9 +72,9 @@ class CustomSocket:
         self.validIPAndPort = True;
 
         #Starts a monitor function on a new thread that queues messages as they are recieved
-
-        self.qt = threading.Thread(target=r.monitor);
-        self.qt.start(); #This may cause a memory leak - unsure.
+        if recv:
+            self.qt = threading.Thread(target=r.monitor);
+            self.qt.start(); #This may cause a memory leak - unsure.
         
         if self.verbose:
             print("Socket bound. Your IP is " + self.my_ip_addr + ". Your port is " + self.my_port);

@@ -42,11 +42,11 @@ class Chat_Server(object):
 					
 					#Logic for evaluating user commands and relaying messages
 					if message[0] == g.command_symbol:
-						uc.parseCommandString(message[1:],source_IP);
+						uc.parseCommandString(message[1:],source_IP,source_port);
 					else:
 						#If the user is not logged in, force them to log in
 						if g.Users.get(source_IP) is None:
-							s.requestConnect(source_IP);
+							s.requestConnect(source_IP, source_port);
 						else:
 							s.relayMessage(message, source_IP);
 
