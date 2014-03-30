@@ -39,7 +39,7 @@ def takeMeasurement(pin):
     GPIO.setup(pin,GPIO.IN)
     return bool(GPIO.input(pin))
 
-def catchPacket(initialPacket,sending=False,stop_time=0):
+def catchPacket(initialPacket,sending=False,stop_time=1):
     """
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
