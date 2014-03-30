@@ -39,12 +39,12 @@ def takeMeasurement(pin):
     GPIO.setup(pin,GPIO.IN)
     return bool(GPIO.input(pin))
 
-def catchPacket(initialPacket,sending=False,stop_time=1):
+def catchPacket(initialPacket,sending=False,stop_time=0):
     """
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
     """
-    start_time = time.time()
+    if stop_time != 0: start_time = time.time()
     flag = False
     currentPacket = initialPacket
     while True:
@@ -78,8 +78,8 @@ def catchPacket(initialPacket,sending=False,stop_time=1):
                 #print(currentPacket)
                 #allPackets.append(currentPacket)
                 return currentPacket
-            if sending and time.time() >= (start_time+stop_time):
-                print('Returning none ' + str(start_time+stop_time))
+            if sending and time.time() >= (start_time+stop_time) and stop_time != 0:
+                print('Returning none ' + str(start_time) + ' ' + str(time.time()))
                 return None
         
 
