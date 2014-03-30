@@ -134,11 +134,11 @@ def catchAck(initialPacket,pulse_width):
         
     return ack
 
-def catchStartSequence(initialPacket):
+def catchStartSequence(initialPacket, sending = False):
     # Catch start sequence
-    startSequence = catchPacket(initialPacket)
+    startSequence = catchPacket(initialPacket, sending)
     initialPacket = [not startSequence[0],2]
-    currentPacket = catchPacket(initialPacket)
+    currentPacket = catchPacket(initialPacket, sending)
     initialPacket = [not currentPacket[0],2]
     #Actually get the message
     pulse_width = startSequence[1]/4
