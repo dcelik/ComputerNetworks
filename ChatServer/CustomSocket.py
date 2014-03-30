@@ -16,7 +16,7 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False):
+    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
         """ Initialize a CustomSocket instance """
     
 
@@ -24,8 +24,7 @@ class CustomSocket:
         self.validFamilyAndProtocol = False;
         self.validIPAndPort = False;
 
-        # Default bind to simulate the ability of the kernel to generate these at runtime if unbound
-        self.bind((g.server_ip,g.server_port),False);
+        
         
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
@@ -51,10 +50,13 @@ class CustomSocket:
         if protocol==2: 
             self.validFamilyAndProtocol = True;
             self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
+
+        # Default bind to simulate the ability of the kernel to generate these at runtime if unbound
+        self.bind((g.server_ip,g.server_port),False);
         
         if self.debug:
             self.bind(("0.0.73.73","69"));
-
+        
     def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """
 
