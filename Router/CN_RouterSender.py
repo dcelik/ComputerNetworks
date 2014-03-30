@@ -35,6 +35,8 @@ class CN_RouterSender(object):
                 while True:
                     try:
                         # Receive Messages from LAN
+                        # NOTE: Addresses are STAYING in Morseformat
+
                         bytearray_msg, source_address, destination_address, ipheader, udpheader = rtsock.recvfrom(1024) # special router recvfrom function
                         source_IP, source_port = source_address
                         destination_IP, destination_port = destination_address
@@ -48,7 +50,7 @@ class CN_RouterSender(object):
                         if self.group == destination_group:
                             # Route to own group over morsenet
                             # Address Resloution Protocol
-                            rtsock.sendto(bytearray_msg, destination_address)
+                            rtsock.sendto(bytearray_msg, destination_address, source_address)
                             print ("\n{} byte message routed via morsenet")
                         else:
                             # Route to other group's router over ethernet
