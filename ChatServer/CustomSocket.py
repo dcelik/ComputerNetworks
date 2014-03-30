@@ -16,7 +16,7 @@ class CustomSocket:
     SOCK_DGRAM = 2;
     timeout = -1;   
   
-    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
+    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=False):
         """ Initialize a CustomSocket instance """
     
 
@@ -31,7 +31,13 @@ class CustomSocket:
         if self.my_mac != router_mac:
             self.macDict = dict();
             self.macDict['router_mac']  = router_mac;
-    
+
+        if debug:
+            self.macDict['II']  = 'I';
+            self.macDict['IN'] = 'N';
+            self.macDict['IR'] = 'R';
+            self.macDict['ID'] = 'D';
+            
         self.verbose = verbose;
         self.debug = debug;
 
@@ -129,7 +135,7 @@ class CustomSocket:
 
         # Assemble MAC package
             # First check to see if the MAC of the recieving IP is known, if not address message to router
-        if to_ip_addr in self.macDict: mac_to = self.macDict[to_ip_addr];
+        if to_ip_addr in self.macDict.keys(): mac_to = self.macDict[to_ip_addr];
         else: mac_to = self.macDict['router_mac'];   # This only works if you're not the router...
             # Then assemble the remainder of the MAC package
         mac_from = self.my_mac;
