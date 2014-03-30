@@ -118,7 +118,7 @@ def catchAck(initialPacket,pulse_width):
     ack = ""
     binary = ""
     while len(ack) < 1:
-        currentPacket = catchPacket(initialPacket)
+        currentPacket = catchPacket(initialPacket,True)
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
         if binary[-4:] == "1000" and binary[:-2] in binaryToCharDict:

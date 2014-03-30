@@ -42,7 +42,7 @@ class Chat_Server(object):
 					
 					#Logic for evaluating user commands and relaying messages
 					if message[0] == g.command_symbol:
-						uc.parseCommandString(message[1:],source_IP,source_port);
+					    uc.parseCommandString(message[1:],source_IP,source_port);
 					else:
 						#If the user is not logged in, force them to log in
 						if g.Users.get(source_IP) is None:
@@ -50,22 +50,5 @@ class Chat_Server(object):
 						else:
 							s.relayMessage(message, source_IP);
 
-				#If no message is received within timeout, execute this code
-				#except timeout:
-				#	continue;
-				#except KeyboardInterrupt:
-				#	sock.close()
-				#	print("Socket Closed");
-				#	exit(0)
-				#except:
-				#	#Raise error and proceed
-				#	continue;
-					
-##	def closeSocket(self, sock):
-##		""" Ensures that socket is closed on program exit """
-##		print(sock)
-##		sock.close()
-
 #------------Executing Code------------#
-if __name__  == "__main__":
-	Chat_Server();
+if __name__  == "__main__": Chat_Server();

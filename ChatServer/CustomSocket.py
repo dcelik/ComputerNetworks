@@ -61,7 +61,7 @@ class CustomSocket:
         self.bind((g.server_ip,g.server_port),False);
         
         if self.debug:
-            self.bind(("0.0.73.73","69"));
+            self.bind(("0.0.73.78","69"));
         
     def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """
