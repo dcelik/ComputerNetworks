@@ -1,32 +1,29 @@
 import CN_Sockets
-import CustomSockets
+import RouterSocket
 
 class CN_RouterReceiver(object):
     
-    team = 'I'
+    group = 'I'
     mac = 'T'
-    eth_ip = '192.168.100.{}'.format(chr(self.team))
-    morse_ip = '0.0.{}.{}'.format(chr(self.team),chr(self.mac))
-    """ Should a Routing Table be added?
-    rt_table = {'II':(Ian's IP, Ian's Port),
-                 'IN':(Nick's IP, Nick's Port),
-                 'ID':(Deniz's IP, Deniz's Port)
-                }
-    """
     
-    def __init__(self,Router_Address=(self.eth_ip,73)):
+    router_eth_ip = {"I":"192.168.100.73",
+                     "E":"192.168.100.50",
+                     "T":"192.168.100.84"
+                    }
+    
+    def __init__(self,Router_Address=(self.router_eth_ip[self.group],73)):
 
-        socket, msocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, CustomSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
+        socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSocket.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
         self.Router_Address = Router_Address
 
         with socket(AF_INET,SOCK_DGRAM) as sock:
-            with msocket(AF_INET,SOCK_DGRAM) as msock:
+            with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
                 
                 sock.bind(self.eth_ip,73)
                 sock.settimeout(2.0) # 2 second timeout
-                msock.bind(self.morse_ip,69)  
-                msock.settimeout(2.0) # 2 second timeout
+                rtsock.bind(self.morse_ip,69)  
+                rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Receiver started for CN_RouterReceiver at IP address {} on port {}".format(
                     Router_Address[0],Router_Address[1])
@@ -48,7 +45,7 @@ class CN_RouterReceiver(object):
                         destination_address = rt_table[destination_address]
                         ENDIF """ 
                         
-                        msock.sendto(bytearray_msg, destination_address)
+                        rtsock.sendto(bytearray_msg, destination_address)
                         print ("\n{} byte message routed via morsenet")
             
 

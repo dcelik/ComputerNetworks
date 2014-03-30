@@ -1,8 +1,7 @@
 
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
-import RouterSockets    
+import RouterSocket
 
-           
 class CN_RouterSender(object):
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
 
@@ -22,10 +21,9 @@ class CN_RouterSender(object):
 
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
-                
                 sock.bind(self.eth_ip,73)
                 sock.settimeout(2.0) # 2 second timeout
-                rtsock.bind(self.morse_ip,69)  
+                rtsock.bind(self.morse_ip,69)
                 rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Sender started for CN_RouterSender at IP address {} on port {}".format(
