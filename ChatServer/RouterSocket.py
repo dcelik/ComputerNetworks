@@ -1,8 +1,18 @@
+import sys
+import os
+import GlobalVars as g
+import threading
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
+import MAC_Identifier as MAC
+sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
+import transmit as t;
+import queuedMonitor as r;
+
 from CustomSocket import CustomSocket
 
-class RouterSockets(CustomSocket):
+class RouterSocket(CustomSocket):
     def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
-        super(RouterSockets, self).__init__(family,protocol,router_mac,verbose,debug)
+        super(RouterSocket, self).__init__(family,protocol,router_mac,verbose,debug)
         self.macDict = {"II":"I",
                         "IR":"R",
                         "IN":"N",
