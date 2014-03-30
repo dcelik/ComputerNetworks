@@ -44,7 +44,9 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
     """
-    if stop_time != 0: start_time = time.time()
+    start_time = 0
+    if stop_time != 0:
+        start_time = time.time()
     flag = False
     currentPacket = initialPacket
     while True:
