@@ -18,12 +18,12 @@ class CN_RouterSender(object):
         socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
         self.Router_Address = Router_Address
-
+        
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
-                sock.bind(self.eth_ip,73)
+                sock.bind(Router_Address)
                 sock.settimeout(2.0) # 2 second timeout
-                rtsock.bind(self.morse_ip,69)
+                rtsock.bind(Router_Address)
                 rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Sender started for CN_RouterSender at IP address {} on port {}".format(
