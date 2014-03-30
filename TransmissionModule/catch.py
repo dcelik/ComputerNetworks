@@ -39,7 +39,7 @@ def takeMeasurement(pin):
     GPIO.setup(pin,GPIO.IN)
     return bool(GPIO.input(pin))
 
-def catchPacket(initialPacket,sending=False,stop_time=0):
+def catchPacket(initialPacket,sending=False,stop_time=1):
     """
     Takes an initial packet (a tuple containing a value and duration e.g. [False,2]
     Returns a complete packet generated from raw data
@@ -79,6 +79,7 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
                 #allPackets.append(currentPacket)
                 return currentPacket
             if sending and time.time() >= (start_time+stop_time):
+                print('Returning none ' + str(start_time+stop_time))
                 return None
         
 
@@ -134,11 +135,11 @@ def catchAck(initialPacket,pulse_width):
         
     return ack
 
-def catchStartSequence(initialPacket):
+def catchStartSequence(initialPacket, sending = False):
     # Catch start sequence
-    startSequence = catchPacket(initialPacket)
+    startSequence = catchPacket(initialPacket, sending)
     initialPacket = [not startSequence[0],2]
-    currentPacket = catchPacket(initialPacket)
+    currentPacket = catchPacket(initialPacket, sending)
     initialPacket = [not currentPacket[0],2]
     #Actually get the message
     pulse_width = startSequence[1]/4
