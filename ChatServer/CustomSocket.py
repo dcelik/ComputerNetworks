@@ -129,7 +129,7 @@ class CustomSocket:
 
         to_ip_addr = address[0];
         to_port = address[1];
-        if (!isinstance(msg,str)):
+        if not isinstance(msg,str):
             msg = msg.decode("utf-8"); #Convert from bytearray to a string for ease of operation
 
         # Assemble UDP package
