@@ -119,9 +119,7 @@ def receiveAck(destination):
     #Catch whitespace before ack
     currentPacket = catchPacket(initialPacket,True,1)
     if currentPacket == None: #If no ack received return False
-        print("no ack")
         return False
-    print("caught packet")
     #Catch start sequence and determine pulse width
     initialPacket = [True,2]
     pulse_width = catchStartSequence(initialPacket, True)

@@ -121,8 +121,9 @@ def catchAck(initialPacket,pulse_width):
     ack = ""
     binary = ""
     while len(ack) < 1:
-        currentPacket = catchPacket(initialPacket,True,.3)
+        currentPacket = catchPacket(initialPacket,True)
         if currentPacket == None:
+            print("err1")
             return 'X'
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
@@ -133,6 +134,7 @@ def catchAck(initialPacket,pulse_width):
             ack = ack + binaryToCharDict[binary]
             binary = ""
         elif binary[-4:] == "1000" and not binary[:-2] in binaryToCharDict or binary[-8:] == "10000000" and not binary in binaryToCharDict:
+            print("blankack")
             ack = ack + "X"
             binary = ""
         
