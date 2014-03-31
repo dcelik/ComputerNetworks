@@ -45,17 +45,17 @@ def receiveMessage():
                 sourceMAC = header[1]
                 length = base36decode(header[2:4])
                 checksum = header[4:]
-                print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
-                print("Payload received:")
-                print(message[1:-1])
-                print("Calculated length: " + str(len(message[1:-1])))
-                print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
                         if destinationMAC == myMAC:
-                                print("Message received. Sending ack.")
                                 sendAck(destinationMAC)
+                                print("Message received. Ack sent.")
                         ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
-                        return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg] 
+                        print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
+                        print("Payload received:")
+                        print(message[1:-1])
+                        print("Calculated length: " + str(len(message[1:-1])))
+                        print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
+                        return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg]
         return False #if in three trials, the message could not be received, return False.
 
 
