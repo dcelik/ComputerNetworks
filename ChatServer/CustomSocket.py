@@ -23,8 +23,6 @@ class CustomSocket:
         # Setup booleans to validate that socket is used correctly
         self.validFamilyAndProtocol = False;
         self.validIPAndPort = False;
-
-        
         
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
@@ -121,6 +119,8 @@ class CustomSocket:
     def sendto(self,msg,address):
         """ Assembles a message and sends it with the down-stack implementation. """
 
+        
+        
         address = self.pubIPToMorse(address);
         
         if not self.validIPAndPort:
@@ -129,7 +129,8 @@ class CustomSocket:
 
         to_ip_addr = address[0];
         to_port = address[1];
-        msg = msg.decode("utf-8"); #Convert from bytearray to a string for ease of operation
+        if (!isinstance(msg,str)):
+            msg = msg.decode("utf-8"); #Convert from bytearray to a string for ease of operation
 
         # Assemble UDP package
         udp_package = to_port + self.my_port + msg;
