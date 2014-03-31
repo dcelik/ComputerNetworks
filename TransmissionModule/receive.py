@@ -57,7 +57,7 @@ def receiveMessage():
                         print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                         time.sleep(0.8) 
                         return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg]
-        return False #if in three trials, the message could not be received, return False.
+        return; #False #if in three trials, the message could not be received, return False.
 
 
 

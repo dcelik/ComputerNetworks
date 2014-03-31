@@ -185,7 +185,7 @@ class CustomSocket:
         """ The recieve function to be used by standard applications. """
 
         data = self.baseRecv(buflen);
-        if data is not None:
+        if data:
             message = data[0];
             mac_header = data[1];
             ip_header = data[2];
