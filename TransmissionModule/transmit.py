@@ -117,12 +117,15 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
 def receiveAck(destination):
     initialPacket = [False,1]
     #Catch whitespace before ack
+    print("one_step")
     currentPacket = catchPacket(initialPacket,True,1)
     if currentPacket == None: #If no ack received return False
         return False
     #Catch start sequence and determine pulse width
     initialPacket = [True,2]
+    print("two_step")
     pulse_width = catchStartSequence(initialPacket, True)
+    print("three_step")
     ack = catchAck([True,2],pulse_width)
     if ack == destination:
         return True
