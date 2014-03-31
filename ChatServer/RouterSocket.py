@@ -11,7 +11,7 @@ import queuedMonitor as r;
 from CustomSocket import CustomSocket
 
 class RouterSocket(CustomSocket):
-    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
+    def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=False):
         CustomSocket.__init__(self,family,protocol,router_mac,verbose,debug)
         self.macDict = {"II":"I",
                         "IR":"R",
@@ -48,8 +48,8 @@ class RouterSocket(CustomSocket):
 
     def recvfrom(self, buflen):
         # copy code from routerRecvFrom (below)
-        data = baseRecv(buflen);
-        if data is not None:
+        data = self.baseRecv(buflen);
+        if data:
             message = data[0]; 
 
             mac_header = data[1];

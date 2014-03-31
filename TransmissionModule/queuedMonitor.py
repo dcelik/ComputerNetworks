@@ -7,7 +7,7 @@ GPIO.setmode(GPIO.BOARD)
 messageList = q.Queue();
 
 def popMessage():
-	if not messageList.Empty():
+	if not messageList.empty():
 		return messageList.get();
 	else:
 		return None;

@@ -1,6 +1,7 @@
 
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
 import RouterSocket
+import os
 
 class CN_RouterSender:
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
@@ -14,9 +15,9 @@ class CN_RouterSender:
                     }
 
     # When Connecting to Olin Network, use the ip given by eth1 of ifconfig
-    def __init__(self,Router_Address=("10.26.8.16",5073)):
+    def __init__(self,Router_Address=("10.26.8.27",5073)):
 
-        socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSocket.RouterSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
+        socket, rtsocket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, RouterSocket.RouterSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 
         self.Router_Address = Router_Address
         
@@ -24,8 +25,8 @@ class CN_RouterSender:
             with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
                 sock.bind(Router_Address)
                 sock.settimeout(2.0) # 2 second timeout
-                rtsock.bind(Router_Address)
-                rtsock.settimeout(2.0) # 2 second timeout
+                rtsock.bind(("0.0.73.84","69"))
+                #rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Sender started for CN_RouterSender at IP address {} on port {}".format(
                     Router_Address[0],Router_Address[1])
@@ -35,6 +36,8 @@ class CN_RouterSender:
                     try:
                         # Receive Messages from LAN
                         # NOTE: Addresses are STAYING in Morseformat
+                        data = rtsock.recvfrom(1024);
+                        if not data: raise timeout;
 
                         bytearray_msg, source_address, destination_address, ipheader, udpheader = rtsock.recvfrom(1024) # special router recvfrom function
                         source_IP, source_port = source_address
@@ -59,7 +62,7 @@ class CN_RouterSender:
                             print ("\n{} byte message routed via ethernet")
 
                     except timeout:
-                        print (".",end="",flush=True)
+                        os.sys.stdout.write(".")
                         continue                
                 
 
