@@ -30,11 +30,11 @@ class CustomSocket:
             self.macDict = dict();
             self.macDict['router_mac']  = router_mac;
 
-        if debug:
-            self.macDict['II']  = 'I';
-            self.macDict['IN'] = 'N';
-            self.macDict['IR'] = 'R';
-            self.macDict['ID'] = 'D';
+        #if debug:
+        #   self.macDict['II']  = 'I';
+        #   self.macDict['IN'] = 'N';
+        #   self.macDict['IR'] = 'R';
+        #   self.macDict['ID'] = 'D';
             
         self.verbose = verbose;
         self.debug = debug;
@@ -96,7 +96,7 @@ class CustomSocket:
         
         ip_from_str = "0.0.";
         ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
-        port_from = port_from_morse;
+        port_from = str(ord(port_from_morse));
         
         return ip_from_str, port_from;
     
