@@ -169,11 +169,11 @@ class CustomSocket:
             source_mac = data[1];
         length = data[2];
         payload = data[3];
-        mac_header = dest_mac+source_mac+str(length);
+        mac_header = dest_mac+source_mac+t.base36decode(length);
 
-        ip_header = payload[:7];
-        udp_header = payload[7:9];
-        message = payload[9:];
+        ip_header = payload[1:6];
+        udp_header = payload[8:10];
+        message = payload[10:];
 
         # If the message is not addressed to this computer's MAC, discard the message
         if dest_mac != self.my_mac: return None;
