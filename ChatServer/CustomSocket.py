@@ -62,6 +62,12 @@ class CustomSocket:
         
         #if self.debug:
         #    self.bind(("0.0.73.78","69"));
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self,*T):
+        return not any((T))
         
     def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """

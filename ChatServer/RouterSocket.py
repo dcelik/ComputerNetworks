@@ -12,7 +12,7 @@ from CustomSocket import CustomSocket
 
 class RouterSocket(CustomSocket):
     def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=True):
-        super(RouterSocket, self).__init__(family,protocol,router_mac,verbose,debug)
+        CustomSocket.__init__(self,family,protocol,router_mac,verbose,debug)
         self.macDict = {"II":"I",
                         "IR":"R",
                         "IN":"N",

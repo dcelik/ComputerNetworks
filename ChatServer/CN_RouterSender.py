@@ -2,7 +2,7 @@
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
 import RouterSocket
 
-class CN_RouterSender(object):
+class CN_RouterSender:
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
 
     group = 'I'
@@ -13,9 +13,10 @@ class CN_RouterSender(object):
                      "T":"192.168.100.84"
                     }
 
-    def __init__(self,Router_Address=(self.router_eth_ip[self.group],73)):
+    # When Connecting to Olin Network, use the ip given by eth1 of ifconfig
+    def __init__(self,Router_Address=("10.26.8.16",5073)):
 
-        socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
+        socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSocket.RouterSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
         self.Router_Address = Router_Address
         
