@@ -107,6 +107,7 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
         print("Done")
         wasReceived = receiveAck(destinationMAC);
         if wasReceived:
+            print("Ack received.")
             return True
         else:
             print("Ack not received.")
