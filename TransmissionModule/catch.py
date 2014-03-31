@@ -80,8 +80,9 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
                 #print(currentPacket)
                 #allPackets.append(currentPacket)
                 return currentPacket
-            if sending and time.time() >= (start_time+stop_time) and stop_time != 0:
-                return None
+            if stop_time != 0:
+                if sending and time.time() >= (start_time+stop_time):
+                    return None
         
 
 def cleanPacket(packet,pulse_width):
@@ -120,7 +121,9 @@ def catchAck(initialPacket,pulse_width):
     ack = ""
     binary = ""
     while len(ack) < 1:
-        currentPacket = catchPacket(initialPacket,True)
+        currentPacket = catchPacket(initialPacket,True,.3)
+        if currentPacket == None:
+            return 'X'
         initialPacket = [not currentPacket[0],2]
         binary = binary + cleanPacket(currentPacket,pulse_width)
         if binary[-4:] == "1000" and binary[:-2] in binaryToCharDict:
