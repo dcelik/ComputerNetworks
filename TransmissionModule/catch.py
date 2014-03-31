@@ -81,7 +81,6 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
                 #allPackets.append(currentPacket)
                 return currentPacket
             if sending and time.time() >= (start_time+stop_time) and stop_time != 0:
-                print('Returning none ' + str(start_time) + ' ' + str(time.time()))
                 return None
         
 
