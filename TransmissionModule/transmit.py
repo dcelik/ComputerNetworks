@@ -81,7 +81,6 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
     payload_transmission = translator.mess2Trans(payload);
     MAC_header = destinationMAC + sourceMAC + length;
     checksum = calc_checksum(MAC_header + payload);
-    print(checksum)
     MAC_header += checksum;
     MAC_header_transmission = translator.mess2Trans(MAC_header);
     LAN_trans = MAC_header_transmission + payload_transmission;
