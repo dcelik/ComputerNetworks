@@ -58,10 +58,9 @@ class CustomSocket:
             self.protocol_identifier = 'E'; #The standard defined base 36 char designating UDP
 
         # Default bind to simulate the ability of the kernel to generate these at runtime if unbound
-        #self.bind((g.server_ip,g.server_port),False);
-        
-        #if self.debug:
-        #    self.bind(("0.0.73.78","69"));
+        bindRecieve = False
+        if self.debug: bindRecieve = True;
+        self.bind((g.server_ip,g.server_port),bindRecieve);
 
     def __enter__(self):
         return self
