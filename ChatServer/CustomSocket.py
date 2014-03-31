@@ -96,9 +96,9 @@ class CustomSocket:
         
         ip_from_str = "0.0.";
         ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
-        port_from_str = str(ord(port_from_morse));
+        port_from = port_from_morse;
         
-        return ip_from_str, port_from_str;
+        return ip_from_str, port_from;
     
     def pubIPToMorse(self, address):
         """ Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
@@ -184,7 +184,7 @@ class CustomSocket:
     def recvfrom(self, buflen):
         """ The recieve function to be used by standard applications. """
 
-        data = baseRecv(buflen);
+        data = self.baseRecv(buflen);
         if data is not None:
             message = data[0];
             mac_header = data[1];
