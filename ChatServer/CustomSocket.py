@@ -169,7 +169,7 @@ class CustomSocket:
             source_mac = data[1];
         length = data[2];
         payload = data[3];
-        mac_header = dest_mac+source_mac+t.base36decode(length);
+        mac_header = dest_mac+source_mac+int(length);
 
         ip_header = payload[:7];
         udp_header = payload[7:9];
