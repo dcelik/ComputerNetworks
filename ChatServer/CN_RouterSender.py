@@ -39,14 +39,15 @@ class CN_RouterSender:
                         data = rtsock.recvfrom(1024);
                         if not data: raise timeout;
 
-                        bytearray_msg, source_address, destination_address, ipheader, udpheader = rtsock.recvfrom(1024) # special router recvfrom function
+                        bytearray_msg, source_address, destination_address, ipheader, udpheader = data # special router recvfrom function
                         source_IP, source_port = source_address
                         destination_IP, destination_port = destination_address
-
+                        print ("ERROR:"+destination_address[0]+destination_address[1])
                         print ("\n{} byte message received from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
                         print ("\n"+bytearray_msg.decode("UTF-8"))
 
                         # destination_IP example: IA, where I is group, A is mac
+                        print(destination_IP)
                         destination_group, destination_mac = destination_IP
 
                         if self.group == destination_group:

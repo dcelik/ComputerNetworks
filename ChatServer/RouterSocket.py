@@ -50,14 +50,16 @@ class RouterSocket(CustomSocket):
         # copy code from routerRecvFrom (below)
         data = self.baseRecv(buflen);
         if data:
+            for i in data:
+                print(i)
             message = data[0]; 
-
+        
             mac_header = data[1];
             ip_header = data[2];
             udp_header = data[3];
 
-            ip_to = ip_header[0];
-            ip_from = ip_header[1];
+            ip_to = ip_header[:2];
+            ip_from = ip_header[2:4];
             udp_to = udp_header[0];
             udp_from = udp_header[1];
 
