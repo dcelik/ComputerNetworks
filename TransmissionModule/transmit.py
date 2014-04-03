@@ -104,7 +104,6 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
         transmit(STD_trans_start, blink_time);
         transmit(LAN_trans, blink_time);
         transmit(STD_trans_stop, blink_time);
-        print("Done")
         wasReceived = receiveAck(destinationMAC);
         if wasReceived:
             print("Ack received.")
