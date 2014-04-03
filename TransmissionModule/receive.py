@@ -50,6 +50,11 @@ def receiveMessage():
                                 sendAck(destinationMAC)
                                 print("Message received. Ack sent.")
                         ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
+                        print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
+                        print("Payload received:")
+                        print(message[1:-1])
+                        print("Calculated length: " + str(len(message[1:-1])))
+                        print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                         return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg]
                 print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
                 print("Payload received:")
