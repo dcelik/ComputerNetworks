@@ -98,7 +98,7 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
     while trials < 3:
         trials += 1;
         while True:
-            packet = catchPacket([False,0],True,(1+uniform(0.4,0.6)))
+            packet = catchPacket([False,0],True,(2))
             if packet == None:
                 break
         transmit(STD_trans_start, blink_time);
@@ -116,7 +116,7 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
 def receiveAck(destination):
     initialPacket = [False,1]
     #Catch whitespace before ack
-    currentPacket = catchPacket(initialPacket,True,1)
+    currentPacket = catchPacket(initialPacket,True,2)
     if currentPacket == None: #If no ack received return False
         return False
     #Catch start sequence and determine pulse width
