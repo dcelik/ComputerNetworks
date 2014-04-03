@@ -34,8 +34,8 @@ GPIO.setmode(GPIO.BOARD)
 ##    return ct<CUTOFF
 
 def takeMeasurement(pin):
-    GPIO.setup(pin,GPIO.OUT)
-    GPIO.output(pin,GPIO.LOW)
+    #GPIO.setup(pin,GPIO.OUT)
+    #GPIO.output(pin,GPIO.LOW)
     GPIO.setup(pin,GPIO.IN)
     return bool(GPIO.input(pin))
 

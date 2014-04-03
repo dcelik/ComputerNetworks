@@ -2,6 +2,7 @@
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
 import RouterSocket
 import os
+import time
 
 class CN_RouterSender:
     """ Computer Networks Chapter 4: Sockets.  UDP Client example. """ 
@@ -37,6 +38,7 @@ class CN_RouterSender:
                         # Receive Messages from LAN
                         # NOTE: Addresses are STAYING in Morseformat
                         data = rtsock.recvfrom(1024);
+                        time.sleep(1.5)
                         if not data: raise timeout;
 
                         bytearray_msg, source_address, destination_address, ipheader, udpheader = data # special router recvfrom function
@@ -53,13 +55,13 @@ class CN_RouterSender:
                             # Route to own group over morsenet
                             # Address Resloution Protocol
                             rtsock.sendto(bytearray_msg, destination_address, source_address)
-                            print ("\n{} byte message routed via morsenet")
+                            print ("\n{} byte message routed via morsenet".format(len(bytearray_msg)))
                         else:
                             # Route to other group's router over ethernet
                             bytearray_ipheader_udpheader_msg = bytearray(ipheader + udpheader, encoding='UTF-8') + bytearray_msg
                             dst_group_router = self.router_eth_ip[destination_group]
                             sock.sendto(bytearray_ipheader_udpheader_msg, dst_group_router)
-                            print ("\n{} byte message routed via ethernet")
+                            print ("\n{} byte message routed via ethernet".format(len(bytearray_msg)))
 
                     except timeout:
                         #os.sys.stdout.write(".")
