@@ -42,7 +42,6 @@ class CN_RouterSender:
                         bytearray_msg, source_address, destination_address, ipheader, udpheader = data # special router recvfrom function
                         source_IP, source_port = source_address
                         destination_IP, destination_port = destination_address
-                        print ("ERROR:"+destination_address[0]+destination_address[1])
                         print ("\n{} byte message received from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
                         print ("\n"+bytearray_msg.decode("UTF-8"))
 
@@ -63,7 +62,7 @@ class CN_RouterSender:
                             print ("\n{} byte message routed via ethernet")
 
                     except timeout:
-                        os.sys.stdout.write(".")
+                        #os.sys.stdout.write(".")
                         continue                
                 
 
