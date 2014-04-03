@@ -49,6 +49,8 @@ def receiveMessage():
                         if destinationMAC == myMAC:
                                 sendAck(destinationMAC)
                                 print("Message received. Ack sent.")
+                        else:
+                                time.sleep(1.8)
                         ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
                         print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
                         print("Payload received:")
