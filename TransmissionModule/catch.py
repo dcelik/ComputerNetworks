@@ -74,9 +74,9 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
             elif not z and flag:
                 currentPacket = [False,currentPacket[1]+flag]
                 flag = False
-            elif z and flag < 50:
+            elif z and flag < 70:
                 flag += 1
-            elif z and flag >= 50:
+            elif z and flag >= 70:
                 currentPacket = [False,currentPacket[1]+20]
                 print(flag)
                 return currentPacket
