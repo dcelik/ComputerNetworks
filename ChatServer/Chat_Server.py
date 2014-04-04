@@ -16,6 +16,7 @@ import CustomSocket as cs
 import GlobalVars as g
 import UserCommands as uc
 import ServerFunctions as s
+import time
 
 class Chat_Server(object):
 	
@@ -26,7 +27,7 @@ class Chat_Server(object):
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
-			#sock.settimeout(-1) # No timeout
+			sock.settimeout(timeout)
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
 			while True:
 				#Check to see if a message is received within timeout
@@ -51,3 +52,6 @@ class Chat_Server(object):
 							s.relayMessage(message, source_IP);
 				except:
 					continue;
+
+if __name__ == "__main__":
+	Chat_Server();

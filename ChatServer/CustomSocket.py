@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import GlobalVars as g
 import threading
 sys.path.insert(0,os.path.join(os.getcwd(), os.pardir)); # Add MAC_Identifier location to path
@@ -12,7 +13,7 @@ import queuedMonitor as r;
       # Associate variables with names so they can be retrived by server
 AF_INET = 2;
 SOCK_DGRAM = 2;
-timeout = -1; 
+timeout = 2; 
 
 
 class CustomSocket:
@@ -40,6 +41,7 @@ class CustomSocket:
             
         self.verbose = verbose;
         self.debug = debug;
+        self.timeout = timeout;
 
     # ------ Set Up Family and Protocol ------ #
         if family!=2:   #AF_INET
@@ -209,4 +211,6 @@ class CustomSocket:
             if udp_to != self.my_port: return None;
 
             return message, pubIPToMorse(ip_from,udp_from); 
-        else: return None;
+        else:
+            time.sleep(self.timeout);
+            return None;
