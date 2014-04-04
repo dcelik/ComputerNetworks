@@ -1,12 +1,14 @@
 import CN_Sockets
+import CustomSocket
+import time
 
 class UDP_Server(object):
     
 
     
-    def __init__(self,IP="127.0.0.1",port=5280):
+    def __init__(self,IP="0.0.73.68",port=69):
 
-        socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
+        socket, AF_INET, SOCK_DGRAM, timeout = CustomSocket.CustomSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
         
         with socket(AF_INET, SOCK_DGRAM) as sock:
             sock.bind((IP,port))
@@ -16,6 +18,11 @@ class UDP_Server(object):
             
             while True:
                 try:
+                    data = sock.recvfrom(1024)
+                    time.sleep(1.5)
+                    if not data:
+                        raise timeout
+                    
                     bytearray_msg, address = sock.recvfrom(1024)
                     source_IP, source_port = address
                     
@@ -25,7 +32,7 @@ class UDP_Server(object):
         
 
                 except timeout:
-                    print (".",end="",flush=True)
+##                    print (".",end="",flush=True)
                     continue
                 
                 
