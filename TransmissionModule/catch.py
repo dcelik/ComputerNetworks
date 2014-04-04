@@ -72,13 +72,13 @@ def catchPacket(initialPacket,sending=False,stop_time=0):
             if not z and not flag:  
                 currentPacket = [False,currentPacket[1]+1]
             elif not z and flag:
-                currentPacket = [False,currentPacket[1]+2]
+                currentPacket = [False,currentPacket[1]+flag]
                 flag = False
-            elif z and not flag:
-                flag = True
-            elif z and flag:
-                #print(currentPacket)
-                #allPackets.append(currentPacket)
+            elif z and flag < 50:
+                flag += 1
+            elif z and flag >= 50:
+                currentPacket = [False,currentPacket[1]+20]
+                print(flag)
                 return currentPacket
             if stop_time != 0:
                 if sending and time.time() >= (start_time+stop_time):

@@ -29,6 +29,7 @@ def receiveMessage():
                 #Catch whitespace before message
                 currentPacket = catchPacket(initialPacket)
                 initialPacket = [not currentPacket[0],2]
+                print("whitespace passed")
                 #Catch start sequence and determine pulse width
                 pulse_width = catchStartSequence(initialPacket)
                 #print(pulse_width)
