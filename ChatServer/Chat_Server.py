@@ -22,7 +22,7 @@ class Chat_Server(object):
 	#------------Run Server------------#
 	def __init__(self,IP=g.server_ip,port=g.server_port):
 											#	reference class 	address family		UDP/TCP protocol	set time until it returns
-		socket, AF_INET, SOCK_DGRAM, timeout = cs.socket, cs.AF_INET, cs.SOCK_DGRAM, cs.timeout
+		socket, AF_INET, SOCK_DGRAM, timeout = cs.CustomSocket, cs.AF_INET, cs.SOCK_DGRAM, cs.timeout
 		
 		with socket(AF_INET, SOCK_DGRAM) as sock:
 			sock.bind((IP,port))
@@ -49,6 +49,5 @@ class Chat_Server(object):
 							s.requestConnect(source_IP, source_port);
 						else:
 							s.relayMessage(message, source_IP);
-
-#------------Executing Code------------#
-if __name__  == "__main__": Chat_Server();
+				except:
+					continue;

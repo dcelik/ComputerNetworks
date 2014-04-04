@@ -8,14 +8,16 @@ sys.path.insert(0,os.path.join(os.getcwd(), os.pardir, "TransmissionModule"));
 import transmit as t;
 import queuedMonitor as r;
 
+  
+      # Associate variables with names so they can be retrived by server
+AF_INET = 2;
+SOCK_DGRAM = 2;
+timeout = -1; 
 
 
 class CustomSocket:
-    # Associate variables with names so they can be retrived by server
-    AF_INET = 2;
-    SOCK_DGRAM = 2;
-    timeout = -1;   
-  
+
+
     def __init__(self,family = 2, protocol = 2, router_mac="T",verbose=False,debug=False):
         """ Initialize a CustomSocket instance """
     
