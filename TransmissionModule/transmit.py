@@ -137,7 +137,7 @@ def transmit(trans,time):
     into actual blinks on the pi.
     trans = the message to be transmitted as a string of 1s and 0s
     """
-
+    GPIO.setup(7,GPIO.OUT)
     for i in range(len(trans)):
         if trans[i] == '1':
             on()
@@ -147,6 +147,7 @@ def transmit(trans,time):
             sleep(time)
             
     off();
+    GPIO.setup(7,GPIO.IN)
             
 
 #----Executing Code----#
