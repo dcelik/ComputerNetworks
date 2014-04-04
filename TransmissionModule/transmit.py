@@ -19,7 +19,7 @@ from utilities import calc_checksum
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7,GPIO.OUT)
+GPIO.setup(7,GPIO.IN)
 
 def on(): GPIO.output(7,True)
 def off(): GPIO.output(7,False)
