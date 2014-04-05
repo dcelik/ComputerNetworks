@@ -32,14 +32,17 @@ class Chat_Server(object):
 			while True:
 				#Check to see if a message is received within timeout
 				try:
-					bytearray_msg, address = sock.recvfrom(65536)
-					source_IP, source_port = address
+					data = sock.recvfrom(65536);
+					if not data: raise timeout;
+					bytearray_msg, address = data;
+
+					source_IP, source_port = address;
 
 					#Actual message handling
 					print ("\nMessage received from ip address {}, port {}:".format(source_IP,source_port))
 					message = bytearray_msg.decode("UTF-8");
-					g.ServerLog.append(message);
 					print(message);
+					g.ServerLog.append(message);
 					
 					#Logic for evaluating user commands and relaying messages
 					if message[0] == g.command_symbol:

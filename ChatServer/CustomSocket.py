@@ -98,9 +98,8 @@ class CustomSocket:
         ip_from_morse = address[0];
         port_from_morse = address[1];
         
-        ip_from_str = "0.0.";
-        ip_from_str += str(ord(ip_from_morse[0])) + "." +  str(ord(ip_from_morse[1]));
-        port_from = str(ord(port_from_morse));
+        ip_from_str = "0.0.{}.{}".format(ord(ip_from_morse[0]),ord(ip_from_morse[1]));
+        port_from = ord(port_from_morse);
         
         return ip_from_str, port_from;
     
@@ -163,7 +162,7 @@ class CustomSocket:
         """
 
         # Attempts to retrieve a message from the queue initilized in bind, returns None if there are no messages
-        data = r.popMessage();  
+        data = r.popMessage();
 
         # Checks to see if a message was retrieved
         if data is None:
@@ -190,16 +189,23 @@ class CustomSocket:
 
         data = self.baseRecv(buflen);
         if data:
+##            print ("Data!");
             message = data[0];
             mac_header = data[1];
             ip_header = data[2];
             udp_header = data[3];
 
-            udp_to = udp_header[0];
+
+
             mac_from = mac_header[1];
-            ip_from = ip_header[1];
+            ip_to = ip_header[:2];
+            ip_from = ip_header[2:4];
+            udp_to = udp_header[0];
             udp_from = udp_header[1];
 
+##            print("mac_header: " +mac_header);
+##            print("ip_header: " +ip_header);
+##            print("udp_header: "+udp_header);
 
             # Add the MAC to the MAC dictionary if it is not already recorded.
             if ip_from in self.macDict: self.macDict[ip_from] = mac_from;
@@ -209,8 +215,13 @@ class CustomSocket:
 
             # If the message is not addressed to this application's port, discard the message
             if udp_to != self.my_port: return None;
-
-            return message, pubIPToMorse(ip_from,udp_from); 
+        
+##            print("message: " +message)
+##            print("ip from: " +ip_from)
+##            print("udp from: " +udp_from)
+##            print(self.morseToPubIP((ip_from,udp_from)));
+            
+            return (message.encode("UTF-8"), self.morseToPubIP((ip_from,udp_from))); 
         else:
             time.sleep(self.timeout);
             return None;
