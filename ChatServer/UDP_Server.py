@@ -23,7 +23,7 @@ class UDP_Server(object):
                     if not data:
                         raise timeout
                     
-                    bytearray_msg, address = sock.recvfrom(1024)
+                    bytearray_msg, address = data
                     source_IP, source_port = address
                     
                     print ("\nMessage received from ip address {}, port {}:".format(
@@ -37,8 +37,8 @@ class UDP_Server(object):
                 
                 
             
-
-
+if __name__ == "__main__":
+    UDP_Server()
 
             
         
