@@ -36,17 +36,17 @@ def parseCommandString(message, source_IP, source_port):
 		if argument is not None:
 			setName(argument, source_IP);
 		else:
-			s.sendMessage("Invalid input. Please enter a valid name in format \\setName [name]",source_IP);
+			s.sendMessage("Invalid input. Please enter a valid name in format /setName [name]",source_IP);
 	elif command == Commands['connect']:
 		if argument is not None:
 			connect(argument, source_IP, source_port);
 		else:
-			s.sendMessage("Invalid input. Please enter a valid name in format \\connect [name]",source_IP,source_port);
+			s.sendMessage("Invalid input. Please enter a valid name in format /connect [name]",source_IP,source_port);
 	elif command == Commands['admin']:
 		if argument is not None:
 		       admin(argument, source_IP);
 		else:
-			s.sendMessage("Invalid password entry. Please enter a valid entry in format \\admin [password]",source_IP);
+			s.sendMessage("Invalid password entry. Please enter a valid entry in format /admin [password]",source_IP);
 	elif command == Commands['disconnect']:
 		disconnect(source_IP);
 	elif command == Commands['disp_users']:
@@ -112,7 +112,7 @@ def sendHelp(dest_IP):
 	""" Sends a message to the destination IP listing (and ideally explaining) functions available to them """
 	command_string = "";
 	for command in Commands.values():
-		command_string += "\\" + command + ", "
+		command_string += "/" + command + ", "
 	help_message = "Available Commands: " + command_string[:-2];
 	s.sendMessage(help_message, dest_IP);
 
