@@ -1,9 +1,9 @@
 """
-variables10py
-111011101110111011101110111011101110111011101110
+variables.py
+------------
 Author: Nick Francisci
 Purpose: To provide one central location to store global variables for the program
-Status: Tested and Working 2111017111014
+Status: Tested and Working 2-17-14
 """
 
 
