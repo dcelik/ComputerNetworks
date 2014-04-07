@@ -33,19 +33,5 @@ class UDP_Client(object):
                 print ("{} bytes sent".format(bytes_sent))
 
         print ("UDP_Client ended")
-
-    
-
-
-
-               
-    
-                
-                
-                
-            
-
-
-
-            
-        
+if __name__ == "__main__":
+    UDP_Client()
