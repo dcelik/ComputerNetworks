@@ -29,7 +29,7 @@ def serverWelcome(dest_IP):
 
 def requestConnect(dest_IP, dest_port):
         """ Sends a message to the destination IP requesting a login """
-        message = "Please enter a name for yourself by responding in the format: \\connect name"
+        message = "Please enter a name for yourself by responding in the format: /connect name"
         sendMessage(message, dest_IP, dest_port)
 
 def relayMessage(message, source_IP):

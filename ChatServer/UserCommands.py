@@ -3,7 +3,7 @@ import ServerFunctions as s
 import AdminCommands as a
 import User as u
 
-Commands = {"set_name": "setName", "disp_users": "users", "get_help": "help", "connect": "connect","disconnect": "disconnect", "admin": "admin"}
+Commands = {"set_name": "SETNAME", "disp_users": "USERS", "get_help": "HELP", "connect": "CONNECT","disconnect": "DISCONNECT", "admin": "ADMIN"}
 
 #------------User Accessible Commands/Command Parsing------------#
 def parseCommandString(message, source_IP, source_port):
