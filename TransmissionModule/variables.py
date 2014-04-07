@@ -7,7 +7,7 @@ Status: Tested and Working 2111017111014
 """
 
 
-blink_time = .05;    #Time given to one blink for transmission
+blink_time = .01;    #Time given to one blink for transmission
 one_baud = int(1/blink_time);                   #Number of pulses required for transmission to occur at 1 baud
 header_pulse = '11110';     #Binary string to indicate start of message according to CompNet Datalink Standards
 stop_pulse = '10111010111010';                    #Binary string representing morse code "+" to establish where message ends according CompNet Datalink Standards
