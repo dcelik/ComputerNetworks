@@ -4,7 +4,7 @@ import CustomSocket as cs
 
 def sendMessage(message, dest_IP, dest_port = g.default_client_port):
     """ Sends a message to the destination IP """
-    if dest_IP in g.Users: port = g.Users[dest_IP].port;
+    if dest_IP in g.IPs.keys(): port = g.Users[dest_IP].port;
 
     Server_Address=(dest_IP,dest_port)
     socket, AF_INET, SOCK_DGRAM = cs.CustomSocket, cs.AF_INET, cs.SOCK_DGRAM
@@ -25,11 +25,11 @@ def sendMessage(message, dest_IP, dest_port = g.default_client_port):
 
 def serverWelcome(dest_IP):
         sendMessage("Welcome. You are logged in as " + g.Users[dest_IP].alias + ". Enter " +
-                    "\\help to see available commands.", dest_IP);
+                    + g.command_symbol +"help to see available commands.", dest_IP);
 
 def requestConnect(dest_IP, dest_port):
         """ Sends a message to the destination IP requesting a login """
-        message = "Please enter a name for yourself by responding in the format: /connect name"
+        message = "Please enter a name for yourself by responding in the format: "+g.command_symbol+"connect name"
         sendMessage(message, dest_IP, dest_port)
 
 def relayMessage(message, source_IP):
