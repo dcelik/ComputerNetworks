@@ -69,3 +69,5 @@ class CN_RouterSender:
                 
 
         print ("UDP_Client ended")
+if __name__ == "__main__":
+    router = CN_RouterSender()
