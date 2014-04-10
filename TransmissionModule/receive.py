@@ -47,6 +47,7 @@ def receiveMessage():
                 checksum = header[4:]
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
                         if destinationMAC == myMAC:
+                                time.sleep(.1)
                                 sendAck(destinationMAC)
                                 #print("Message received. Ack sent.")
                         else:
