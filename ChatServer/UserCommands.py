@@ -54,7 +54,7 @@ def parseCommandString(message, source_IP, source_port):
 	elif command == Commands['get_help']:
 		sendHelp(source_IP);
 	else:
-		s.sendMessage("Invalid command.", source_IP, source_port);
+		s.sendMessage("INVALID COMMAND.", source_IP, source_port);
 		
 
 def admin(pw, source_IP):
@@ -80,6 +80,7 @@ def connect(name, source_IP, source_port):
 	elif not name in g.IPs.keys():
 		g.Users[source_IP] = u.User(name, source_port);
 		g.IPs[name] = source_IP;
+		print("serverwelcome")
 		s.serverWelcome(source_IP);
 	else:
 		s.sendMessage("Name already taken.",source_IP);

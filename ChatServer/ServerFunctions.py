@@ -4,24 +4,28 @@ import CustomSocket as cs
 
 def sendMessage(message, dest_IP, dest_port = g.default_client_port):
     """ Sends a message to the destination IP """
-    if dest_IP in g.IPs.keys(): port = g.Users[dest_IP].port;
+    try:
+        if dest_IP in g.IPs.keys(): port = g.Users[dest_IP].port;
+        print("sending")
+        Server_Address=(dest_IP,dest_port)
+        socket, AF_INET, SOCK_DGRAM = cs.CustomSocket, cs.AF_INET, cs.SOCK_DGRAM
+        with socket(AF_INET,SOCK_DGRAM) as sock:
+            #Check if string is actually a list and parse if so
+            if isinstance(message,list):
+                str_message = ''.join(message);
+            else:
+                str_message = message;
 
-    Server_Address=(dest_IP,dest_port)
-    socket, AF_INET, SOCK_DGRAM = cs.CustomSocket, cs.AF_INET, cs.SOCK_DGRAM
-    with socket(AF_INET,SOCK_DGRAM) as sock:
-        #Check if string is actually a list and parse if so
-        if isinstance(message,list):
-            str_message = ''.join(message);
-        else:
-            str_message = message;
-
-        #Display and log on server
-        g.ServerLog.append(str_message);
-        print(str_message)
-
-        bytearray_message = bytearray(str_message,encoding="UTF-8")
-        bytes_sent = sock.sendto(bytearray_message, Server_Address)
-
+            #Display and log on server
+            g.ServerLog.append(str_message);
+            bytearray_message = bytearray(str_message,encoding="UTF-8")
+            print(str_message)
+            print(bytearray_message)
+            print(Server_Address)
+            bytes_sent = sock.sendto(bytearray_message, Server_Address)
+    except Exception as xx:
+        print(xx)
+    
 
 def serverWelcome(dest_IP):
         sendMessage("Welcome. You are logged in as " + g.Users[dest_IP].alias + ". Enter " +

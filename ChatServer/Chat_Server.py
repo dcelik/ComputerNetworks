@@ -55,6 +55,7 @@ class Chat_Server(object):
 							s.relayMessage(message, source_IP);
 				except:
 					continue;
+		print("died!")
 
 if __name__ == "__main__":
 	Chat_Server();
