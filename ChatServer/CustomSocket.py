@@ -13,8 +13,11 @@ import queuedMonitor as r;
       # Associate variables with names so they can be retrived by server
 AF_INET = 2;
 SOCK_DGRAM = 2;
-timeout = 2; 
-
+timeout = 2;
+try:
+    macDict
+except NameError:
+    macDict = dict();
 
 class CustomSocket:
 
@@ -30,8 +33,7 @@ class CustomSocket:
         # Setup MAC Data
         self.my_mac = MAC.my_ad;
         if self.my_mac != router_mac:
-            self.macDict = dict();
-            self.macDict['router_mac']  = router_mac;
+           macDict['router_mac']  = router_mac;
 
         #if debug:
         #   self.macDict['II']  = 'I';
@@ -129,6 +131,7 @@ class CustomSocket:
         if not self.validIPAndPort:
             print("Error: Invalid IP and port or socket has not been bound with an IP and port: message not sent!");
             return;
+        else: msg = msg.upper();
 
         to_ip_addr = address[0];
         to_port = address[1];
@@ -144,12 +147,12 @@ class CustomSocket:
 
         # Assemble MAC package
             # First check to see if the MAC of the recieving IP is known, if not address message to router
-        if to_ip_addr in self.macDict.keys(): mac_to = self.macDict[to_ip_addr];
-        else: mac_to = self.macDict['router_mac'];   # This only works if you're not the router...
-            # Then assemble the remainder of the MAC package
+        if to_ip_addr in macDict.keys(): mac_to = macDict[to_ip_addr];
+        else: mac_to = macDict['router_mac'];   # This only works if you're not the router...
+
+        # Then assemble the remainder of the MAC package
         mac_from = self.my_mac;
         # Send the message
-        print(mac_to+mac_from+ip_package)
         t.sendMessage(mac_to,mac_from,ip_package);
 
     def baseRecv(self, buflen):
@@ -189,13 +192,10 @@ class CustomSocket:
 
         data = self.baseRecv(buflen);
         if data:
-##            print ("Data!");
             message = data[0];
             mac_header = data[1];
             ip_header = data[2];
             udp_header = data[3];
-
-
 
             mac_from = mac_header[1];
             ip_to = ip_header[:2];
@@ -203,23 +203,14 @@ class CustomSocket:
             udp_to = udp_header[0];
             udp_from = udp_header[1];
 
-##            print("mac_header: " +mac_header);
-##            print("ip_header: " +ip_header);
-##            print("udp_header: "+udp_header);
-
             # Add the MAC to the MAC dictionary if it is not already recorded.
-            if not ip_from in self.macDict.keys(): self.macDict[ip_from] = mac_from;
+            if not ip_from in macDict.keys(): macDict[ip_from] = mac_from;
 
             # If the message is not addressed to this computer's IP, discard the message (should be redudant with MAC)
             if ip_to != self.my_ip_addr: return None;
 
             # If the message is not addressed to this application's port, discard the message
             if udp_to != self.my_port: return None;
-        
-##            print("message: " +message)
-##            print("ip from: " +ip_from)
-##            print("udp from: " +udp_from)
-##            print(self.morseToPubIP((ip_from,udp_from)));
             
             return (message.encode("UTF-8"), self.morseToPubIP((ip_from,udp_from))); 
         else:

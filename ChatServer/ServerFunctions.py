@@ -16,6 +16,7 @@ def sendMessage(message, dest_IP, dest_port = g.default_client_port):
 
 		#Display and log on server
 		g.ServerLog.append(str_message);
+		print(str_message);
 		bytearray_message = bytearray(str_message,encoding="UTF-8")
 		bytes_sent = sock.sendto(bytearray_message, Server_Address)
 
