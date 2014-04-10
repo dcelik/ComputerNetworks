@@ -107,7 +107,6 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
         transmit(STD_trans_stop, blink_time);
         wasReceived = receiveAck(destinationMAC);
         if wasReceived:
-            print("Ack received.")
             return True
         else:
             print("Ack not received.")
@@ -124,8 +123,6 @@ def receiveAck(destination):
     initialPacket = [True,2]
     pulse_width = catchStartSequence(initialPacket, True)
     ack = catchAck([True,2],pulse_width)
-    print("ack"+ack)
-    print("dest"+destination)
     if ack == destination:
         return True
     else:

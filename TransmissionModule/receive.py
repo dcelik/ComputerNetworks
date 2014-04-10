@@ -48,21 +48,21 @@ def receiveMessage():
                 if len(message[1:-1]) == length and checksum == calc_checksum(header[0:4] + message[1:-1]):
                         if destinationMAC == myMAC:
                                 sendAck(destinationMAC)
-                                print("Message received. Ack sent.")
+                                #print("Message received. Ack sent.")
                         else:
                                 time.sleep(1.8)
                         ipheader_udpheader_msg = message[:-1] # Clarification of what "message" means throughout the stack
-                        print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
-                        print("Payload received:")
-                        print(message[1:-1])
-                        print("Calculated length: " + str(len(message[1:-1])))
-                        print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
+                        #print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
+                        #print("Payload received:")
+                        #print(message[1:-1])
+                        #print("Calculated length: " + str(len(message[1:-1])))
+                        #print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                         return [destinationMAC,sourceMAC,length, ipheader_udpheader_msg]
-                print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
-                print("Payload received:")
-                print(message[1:-1])
-                print("Calculated length: " + str(len(message[1:-1])))
-                print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
+                #print("Header: " + destinationMAC + " " + sourceMAC + " " + str(length) + " " + header[4:])
+                #print("Payload received:")
+                #print(message[1:-1])
+                #print("Calculated length: " + str(len(message[1:-1])))
+                #print("Calculated checksum: " + calc_checksum(header[0:4] + message[1:-1]))
                 time.sleep(1.8) 
         return; #False #if in three trials, the message could not be received, return False.
 
@@ -70,7 +70,7 @@ def receiveMessage():
 
 def sendAck(destination):
         ack = header_pulse + translator.mess2Trans(destination ) + '1';
-        print(ack)
+        #print(ack)
         transmit(ack, blink_time)
-        print("Ack sent.")
+        #print("Ack sent.")
         return True
