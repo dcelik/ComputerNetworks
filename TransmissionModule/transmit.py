@@ -124,8 +124,8 @@ def receiveAck(destination):
     initialPacket = [True,10]
     pulse_width = catchStartSequence(initialPacket, True)
     ack = catchAck([True,10],pulse_width)
-    print('ACK=' + ack)
-    print(pulse_width)
+    #print('ACK=' + ack)
+    #print(pulse_width)
     if ack == destination:
         return True
     else:

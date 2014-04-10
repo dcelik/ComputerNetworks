@@ -50,8 +50,6 @@ class RouterSocket(CustomSocket):
         # copy code from routerRecvFrom (below)
         data = self.baseRecv(buflen);
         if data:
-            for i in data:
-                print(i)
             message = data[0]; 
         
             mac_header = data[1];
