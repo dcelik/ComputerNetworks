@@ -33,11 +33,11 @@ class CustomSocket:
             self.macDict = dict();
             self.macDict['router_mac']  = router_mac;
 
-        if debug:
-           self.macDict['II']  = 'I';
-           self.macDict['IN'] = 'N';
-           self.macDict['IR'] = 'R';
-           self.macDict['ID'] = 'D';
+        #if debug:
+        #   self.macDict['II']  = 'I';
+        #   self.macDict['IN'] = 'N';
+        #   self.macDict['IR'] = 'R';
+        #   self.macDict['ID'] = 'D';
             
         self.verbose = verbose;
         self.debug = debug;
@@ -64,14 +64,11 @@ class CustomSocket:
         if self.debug: bindRecieve = True;
         self.bind((g.server_ip,g.server_port),bindRecieve);
 
-
     def __enter__(self):
         return self
 
-
     def __exit__(self,*T):
         return not any((T))
-
         
     def bind(self, address, recv=True):
         """ Start a socket listening for messages addressed to the parent class. """
@@ -105,7 +102,6 @@ class CustomSocket:
         port_from = ord(port_from_morse);
         
         return ip_from_str, port_from;
-
     
     def pubIPToMorse(self, address):
         """ Converts an address in the standard IP:Port format to letters for transmission on our morse layer. """
@@ -118,15 +114,15 @@ class CustomSocket:
         port = chr(new_address[4]);
     
         return ip_addr, port;
-
     
     def settimeout(self, timeout):
         """ Sets a message timeout: the timeout is currently unused """
         self.timeout = timeout;
 
-
     def sendto(self,msg,address):
-        """ Assembles a message and sends it with the down-stack implementation. """        
+        """ Assembles a message and sends it with the down-stack implementation. """
+
+        
         
         address = self.pubIPToMorse(address);
         
@@ -150,13 +146,11 @@ class CustomSocket:
             # First check to see if the MAC of the recieving IP is known, if not address message to router
         if to_ip_addr in self.macDict.keys(): mac_to = self.macDict[to_ip_addr];
         else: mac_to = self.macDict['router_mac'];   # This only works if you're not the router...
-
-        # Then assemble the remainder of the MAC package
+            # Then assemble the remainder of the MAC package
         mac_from = self.my_mac;
-        
         # Send the message
+        print(mac_to+mac_from+ip_package)
         t.sendMessage(mac_to,mac_from,ip_package);
-
 
     def baseRecv(self, buflen):
         """ 
@@ -195,16 +189,23 @@ class CustomSocket:
 
         data = self.baseRecv(buflen);
         if data:
+##            print ("Data!");
             message = data[0];
             mac_header = data[1];
             ip_header = data[2];
             udp_header = data[3];
+
+
 
             mac_from = mac_header[1];
             ip_to = ip_header[:2];
             ip_from = ip_header[2:4];
             udp_to = udp_header[0];
             udp_from = udp_header[1];
+
+##            print("mac_header: " +mac_header);
+##            print("ip_header: " +ip_header);
+##            print("udp_header: "+udp_header);
 
             # Add the MAC to the MAC dictionary if it is not already recorded.
             if not ip_from in self.macDict.keys(): self.macDict[ip_from] = mac_from;
@@ -214,6 +215,11 @@ class CustomSocket:
 
             # If the message is not addressed to this application's port, discard the message
             if udp_to != self.my_port: return None;
+        
+##            print("message: " +message)
+##            print("ip from: " +ip_from)
+##            print("udp from: " +udp_from)
+##            print(self.morseToPubIP((ip_from,udp_from)));
             
             return (message.encode("UTF-8"), self.morseToPubIP((ip_from,udp_from))); 
         else:
