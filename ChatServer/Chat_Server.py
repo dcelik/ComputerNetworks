@@ -31,9 +31,12 @@ class Chat_Server(object):
 			print ("Chat Server started on IP Address {}, port {}".format(IP,port))
 			while True:
 				#Check to see if a message is received within timeout
-				try:
+				
 					data = sock.recvfrom(65536);
-					if not data: raise timeout;
+					try:
+						if not data: raise timeout;
+					except:
+						continue;
 					bytearray_msg, address = data;
 
 					source_IP, source_port = address;
@@ -53,8 +56,7 @@ class Chat_Server(object):
 							s.requestConnect(source_IP, source_port);
 						else:
 							s.relayMessage(message, source_IP);
-				except:
-					continue;
+				
 		print("died!")
 
 if __name__ == "__main__":

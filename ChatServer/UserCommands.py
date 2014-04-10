@@ -80,7 +80,6 @@ def connect(name, source_IP, source_port):
 	elif not name in g.IPs.keys():
 		g.Users[source_IP] = u.User(name, source_port);
 		g.IPs[name] = source_IP;
-		print("serverwelcome")
 		s.serverWelcome(source_IP);
 	else:
 		s.sendMessage("Name already taken.",source_IP);
