@@ -120,9 +120,9 @@ def receiveAck(destination):
     if currentPacket == None: #If no ack received return False
         return False
     #Catch start sequence and determine pulse width
-    initialPacket = [True,2]
+    initialPacket = [True,10]
     pulse_width = catchStartSequence(initialPacket, True)
-    ack = catchAck([True,2],pulse_width)
+    ack = catchAck([True,10],pulse_width)
     if ack == destination:
         return True
     else:
