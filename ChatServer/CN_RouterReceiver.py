@@ -1,5 +1,6 @@
 import CN_Sockets
 import RouterSocket
+import os.sys.stdout.write as standby_display
 
 class CN_RouterReceiver(object):
     
@@ -11,7 +12,7 @@ class CN_RouterReceiver(object):
                      "T":"192.168.100.84"
                     }
     
-    def __init__(self,Router_Address=(self.router_eth_ip[self.group],73)):
+    def __init__(self,Router_Address=("10.26.8.27",5073)):
 
         socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSocket.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
@@ -19,11 +20,10 @@ class CN_RouterReceiver(object):
 
         with socket(AF_INET,SOCK_DGRAM) as sock:
             with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
-                
-                sock.bind(self.eth_ip,73)
+                sock.bind(Router_Address)
                 sock.settimeout(2.0) # 2 second timeout
-                rtsock.bind(self.morse_ip,69)  
-                rtsock.settimeout(2.0) # 2 second timeout
+                rtsock.bind(("0.0.73.84","69"))
+                #rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Receiver started for CN_RouterReceiver at IP address {} on port {}".format(
                     Router_Address[0],Router_Address[1])
@@ -31,30 +31,46 @@ class CN_RouterReceiver(object):
 
                 while True:
                     try:
-                        bytearray_msg, address = sock.recvfrom(1024)
-                        source_IP, source_port = address
-                        # Need access to routing destination
-                        data = bytearray_msg.decode('utf-8')
-                        destination_address = data[:2]
+                        # We assume the bytearray CN_RouterSender sends on the ethernet is the same as what CN_RouterReceiver receives on ethernet
+                        # Hence the variable name bytearray_(ipheader_udpheader_msg)
+                        bytearray_ipheader_udpheader_msg, other_router_address = sock.recvfrom(1024)
+                        source_IP, source_port = other_router_address
                         
-                        print ("\n{} byte message received from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
-                        print ("\n"+bytearray_msg.decode("UTF-8"))
+                        ipheader_udpheader_msg = bytearray_ipheader_udpheader_msg.decode('utf-8')
+                        
+                        # --- relies on IP/UDP Protocal written by Hill et al --- #
+                        ipheader = ipheader_udpheader_msg[:7] # eg.'EA' + 'IB' + 'E' + 'EA'
+                        udpheader = ipheader_udpheader_msg[7:9] # eg. 'B' + 'C'
+                        msg = ipheader_udpheader_msg[9:]
+                        dst_ip, src_ip = ipheader[:2], ipheader[2:4] # ipheader example: 'EA' + 'IB' + 'E' + 'EA' where 'EA' is ip_to, 'IB' is ip_from
+                        dst_port, src_port = udpheader # udpheader example: 'BC' where B udp_to, C udp_from
+                                               
+                        # destination/to address should be in the same format that CN_RouterSocket.recvfrom returns
+                        # (ip_to, udp_to) format
+                        dst_address = (dst_ip, dst_port)
+                        print ("Expected Destination Address Format: " + str(("II", "E")))
+                        print ("Output Destination Address: " + str(dst_address))
 
+                        # source/from address assume to adhere to CN_RouterSocket.recvfrom returns
+                        # (ip_from, udp_from) format
+                        src_address = (src_ip, src_port)
+                        print ("Expected source address format: " + str(("II", "E")))
+                        print ("Output source address format: " + str(src_address))
+
+                        print ("\n{} byte message received via the ethernet from ip address {}, port {}:".format(len(bytearray_msg),source_IP,source_port))
+                        print ("\n"+bytearray_ipheader_udpheader_msg.decode("UTF-8"))
                         
-                        """ IF routing table 
-                        destination_address = rt_table[destination_address]
-                        ENDIF """ 
-                        
-                        rtsock.sendto(bytearray_msg, destination_address)
+                        bytearray_msg = msg.encode()
+                        rtsock.sendto(bytearray_msg, dst_address, src_address)
                         print ("\n{} byte message routed via morsenet")
             
 
                     except timeout:
-                        print (".",end="",flush=True)
+                        # standby_display(".") # print standby dots on the same line
                         continue
                 
-                
-            
+if __name__ == '__main__':
+    router = CN_RouterReceiver()
 
 
 

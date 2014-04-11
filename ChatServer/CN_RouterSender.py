@@ -1,7 +1,7 @@
 
 import CN_Sockets # CN_Sockets adds ability to interrupt "while True" loop with ctl-C
 import RouterSocket
-import os
+import os.sys.stdout.write as standby_display
 import time
 
 class CN_RouterSender:
@@ -64,7 +64,7 @@ class CN_RouterSender:
                             print ("\n{} byte message routed via ethernet".format(len(bytearray_msg)))
 
                     except timeout:
-                        #os.sys.stdout.write(".")
+                        # standby_display(".") # print standby dots on the same line
                         continue                
                 
 
