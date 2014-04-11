@@ -124,8 +124,6 @@ class CustomSocket:
     def sendto(self,msg,address):
         """ Assembles a message and sends it with the down-stack implementation. """
 
-        
-        
         address = self.pubIPToMorse(address);
         
         if not self.validIPAndPort:
