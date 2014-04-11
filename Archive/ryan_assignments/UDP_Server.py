@@ -4,7 +4,7 @@ class UDP_Server(object):
     
 
     
-    def __init__(self,IP="127.0.0.1",port=5280):
+    def __init__(self,IP="192.168.100.82",port=5280):
 
         socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
         
@@ -25,10 +25,11 @@ class UDP_Server(object):
         
 
                 except timeout:
-                    print (".",end="",flush=True)
+                    print (".",end="")
                     continue
                 
-                
+if __name__ == "__main__":
+    server = UDP_Server()
             
 
 
