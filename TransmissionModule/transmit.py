@@ -99,13 +99,14 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
     while trials < 3:
         trials += 1;
         while True:
-            packet = catchPacket([False,0],True,(2))
+            packet = catchPacket([False,0],True,2)
             if packet == None:
                 break
         transmit(STD_trans_start, blink_time);
         transmit(LAN_trans, blink_time);
         transmit(STD_trans_stop, blink_time);
         wasReceived = receiveAck(destinationMAC);
+        time.sleep(1.4)
         if wasReceived:
             return True
         else:

@@ -12,6 +12,7 @@ class UDP_Client(object):
         socket, AF_INET, SOCK_DGRAM = CustomSocket.CustomSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
 
         with socket(AF_INET,SOCK_DGRAM) as sock:
+
           
             
             print ("UDP_Client started for UDP_Server at IP address {} on port {}".format(
