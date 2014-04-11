@@ -77,6 +77,11 @@ def sendMessage(destinationMAC='C', sourceMAC='A', payload='ICIAEEABCHELLO WORLD
     
     #Assemble LAN message to be sent at group speed
     payload = payload.upper()
+    new_payload = ''
+    for ch in payload:
+        if ch in charToBinaryDict.keys():
+            new_payload += ch
+    payload = new_payload
     length = str(base36encode(len(payload))); #Length is measured in transmission characters
 
     payload_transmission = translator.mess2Trans(payload);
