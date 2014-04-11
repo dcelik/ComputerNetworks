@@ -2,8 +2,6 @@ import CN_Sockets
 
 class UDP_Server(object):
     
-
-    
     def __init__(self,IP="192.168.100.73",port=5280):
 
         socket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
