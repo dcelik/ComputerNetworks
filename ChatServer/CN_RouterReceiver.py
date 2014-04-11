@@ -1,6 +1,5 @@
 import CN_Sockets
 import RouterSocket
-import os.sys.stdout.write as standby_display
 
 class CN_RouterReceiver(object):
     
@@ -9,12 +8,13 @@ class CN_RouterReceiver(object):
     
     router_eth_ip = {"I":"192.168.100.73",
                      "E":"192.168.100.50",
-                     "T":"192.168.100.84"
+                     "T":"192.168.100.84",
+                     "R":"192.168.100.82"
                     }
     
-    def __init__(self,Router_Address=("10.26.8.27",5073)):
+    def __init__(self,Router_Address=("192.168.100.73",5073)):
 
-        socket, rtsocket, AF_INET, SOCK_DGRAM = CN_Sockets.socket, RouterSocket.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM
+        socket, rtsocket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, RouterSocket.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 
         self.Router_Address = Router_Address
 

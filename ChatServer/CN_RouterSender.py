@@ -12,7 +12,7 @@ class CN_RouterSender:
     router_eth_ip = {"I":"192.168.100.73",
                      "E":"192.168.100.50",
                      "T":"192.168.100.84",
- 		     "R":"192:168.100.82"
+ 		             "R":"192:168.100.82"
                     }
 
     # When Connecting to Olin Network, use the ip given by eth1 of ifconfig
