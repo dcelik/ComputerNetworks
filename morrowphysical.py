@@ -16,6 +16,8 @@ GPIO.setwarnings(False)
 #------------------CLASS------------------#
 class MorrowNIC(object):
 	def __init__(self):
+		self.MAC = 'A'
+		
 		self.pulse_duration = .01*1000000
 		self.pulse_width = None
 
@@ -32,7 +34,8 @@ class MorrowNIC(object):
 
 		self.running = True
 		self.send_queue = Queue()
-		self.send_queue.put("Random stuff")
+		self.ack_queue = Queue()
+		self.send_queue.put("A cat ran down the sidewalk")
 		self.send_queue.put("More stuff")
 		self.ack_wait = self.pulse_duration*50
 		self.send_thread = threading.Thread(target=self.send())
@@ -74,7 +77,15 @@ class MorrowNIC(object):
 				length = 0
 			transmission += str(pulse[0])*int(length)
 		transmission = self.errorCorrect(transmission)
-		self.receive_queue.put(transmission)
+		#---TO BE EDITED---#
+		text = self.convertToText(transmission)
+		if len(text) == 1:
+			self.ack_queue.put(text)
+		else:
+			datalink = Datalink(text)
+			if datalink.dest_MAC == self.MAC:
+				self.ack_queue.put(datalink.source_MAC)
+				self.receive_queue.put(datalink)
 		print(self.convertToText(transmission))
 
 	def errorCorrect(self,transmission):
@@ -92,7 +103,7 @@ class MorrowNIC(object):
 			sections.remove('000')
 		if sections[-1] == "0000":
 			sections = sections[:-1]
-		print(sections)
+		#print(sections)
 		text = ''.join([binaryToCharDict[binary] for binary in sections])
 		return text
 
@@ -118,18 +129,28 @@ class MorrowNIC(object):
 
 	def send(self):
 		while self.running:
-			if not self.send_queue.empty():
+			if not self.ack_queue.empty():
+				transmission = self.convertToTransmission(self.ack_queue.get())
+				sleep(self.pulse_duration*5/1000000)
+				self.transmit(transmission)
+			elif not self.send_queue.empty():
 				difference = (datetime.now()-self.previous_edge)
-				print(difference)
 				if (difference.seconds*1000000 + difference.microseconds) > self.ack_wait:
-					transmission = self.convertToTransmission(self.send_queue.get())
+					raw_transmission = self.send_queue.get()
+					transmission = self.convertToTransmission(raw_transmission)
 					self.transmit(transmission)
-				else:
 					sleep(self.ack_wait/1000000)
-			else:
-				sleep(self.ack_wait/1000000)
+					if not self.ack_queue.empty():
+						ack = self.ack_queue.get()
+						if not ack == self.MAC:
+							self.send_queue.put(raw_transmission)
+			sleep((self.ack_wait/1000000)/4)
 		
 			
+class Datalink(object):
+	def __init__(self,transmission):
+		self.dest_MAC = transmission[0]
+		self.source_MAC = 'B'
 
 if __name__ == "__main__":
 	s = .01
