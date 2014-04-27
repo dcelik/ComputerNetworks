@@ -16,6 +16,7 @@ GPIO.setwarnings(False)
 #------------------CLASS------------------#
 class MorrowNIC(object):
 	def __init__(self):
+		self.all_pulses = []
 		self.MAC = 'A'
 		
 		self.pulse_duration = .01*1000000
@@ -35,9 +36,9 @@ class MorrowNIC(object):
 		self.running = True
 		self.send_queue = Queue()
 		self.ack_queue = Queue()
-		self.send_queue.put("A cat ran down the sidewalk")
-		self.send_queue.put("More stuff")
-		self.ack_wait = self.pulse_duration*50
+		self.send_queue.put("B cat ran down the sidewalk")
+		#self.send_queue.put("More stuff")
+		self.ack_wait = self.pulse_duration*10
 		self.send_thread = threading.Thread(target=self.send())
 		self.send_thread.start()
 		
@@ -48,7 +49,7 @@ class MorrowNIC(object):
 		pulse = (self.bus_state,delta.seconds*1000000 + delta.microseconds)
 		self.previous_edge = self.current_edge
 		self.bus_state = GPIO.input(input_pin)
-
+		self.all_pulses.append(pulse)
 		if pulse[0] and pulse[1] >= 3.5*self.pulse_duration:
 			if not self.receiving_state:
 				self.pulse_width = pulse[1]/4.0
@@ -74,6 +75,7 @@ class MorrowNIC(object):
 			elif pulse[1] > self.pulse_width*6.0 and pulse[1] <= self.pulse_width*8.0:
 				length = 7
 			else:
+				print(length)
 				length = 0
 			transmission += str(pulse[0])*int(length)
 		transmission = self.errorCorrect(transmission)
@@ -84,9 +86,10 @@ class MorrowNIC(object):
 		else:
 			datalink = Datalink(text)
 			if datalink.dest_MAC == self.MAC:
+				print("sending ack")
 				self.ack_queue.put(datalink.source_MAC)
 				self.receive_queue.put(datalink)
-		print(self.convertToText(transmission))
+		print(text)
 
 	def errorCorrect(self,transmission):
 		return transmission
@@ -142,8 +145,8 @@ class MorrowNIC(object):
 					sleep(self.ack_wait/1000000)
 					if not self.ack_queue.empty():
 						ack = self.ack_queue.get()
-						if not ack == self.MAC:
-							self.send_queue.put(raw_transmission)
+						print("ack received: " + ack)
+					self.send_queue.put(raw_transmission)
 			sleep((self.ack_wait/1000000)/4)
 		
 			
