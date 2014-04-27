@@ -3,6 +3,7 @@ from time import sleep
 from datetime import datetime
 from queue import Queue
 from morrowglobals import charToBinaryDict,binaryToCharDict
+import threading
 
 #------------------SETUP------------------#
 
@@ -20,16 +21,23 @@ class MorrowNIC(object):
 
 		self.previous_edge = datetime.now()
 		self.current_edge = None
-
-		self.last_pulse = None
 		
-		self.transmission_queue = Queue()
+		self.receive_queue = Queue()
 		self.pulse_queue = Queue()
 		
 		self.bus_state = GPIO.input(input_pin)
 		self.receiving_state = False
 
 		GPIO.add_event_detect(input_pin,GPIO.BOTH,callback=self.edgeFound)
+
+		self.running = True
+		self.send_queue = Queue()
+		self.send_queue.put("Random stuff")
+		self.send_queue.put("More stuff")
+		self.ack_wait = self.pulse_duration*50
+		self.send_thread = threading.Thread(target=self.send())
+		self.send_thread.start()
+		
 
 	def edgeFound(self,pin):
 		self.current_edge = datetime.now()
@@ -42,14 +50,14 @@ class MorrowNIC(object):
 			if not self.receiving_state:
 				self.pulse_width = pulse[1]/4.0
 			if self.receiving_state:
-				self.pushTransmission()
+				self.evaluateTransmission()
 			self.receiving_state = not self.receiving_state
 			return
 		
 		if self.receiving_state:
 			self.pulse_queue.put(pulse)
 			
-	def pushTransmission(self):
+	def evaluateTransmission(self):
 		transmission = ""
 		whitespace = self.pulse_queue.get()
 		assert whitespace[0] == 0
@@ -66,7 +74,8 @@ class MorrowNIC(object):
 				length = 0
 			transmission += str(pulse[0])*int(length)
 		transmission = self.errorCorrect(transmission)
-		self.transmission_queue.put(transmission)
+		self.receive_queue.put(transmission)
+		print(self.convertToText(transmission))
 
 	def errorCorrect(self,transmission):
 		return transmission
@@ -93,7 +102,6 @@ class MorrowNIC(object):
 		text = text.upper()
 		marker_code = "11110"
 		binary = ''.join([charToBinaryDict[char] for char in text])
-		print(binary)
 		return marker_code + binary + marker_code
 	
 	def transmit(self,trans):
@@ -107,6 +115,19 @@ class MorrowNIC(object):
 				sleep(self.pulse_duration/1000000)
 		GPIO.output(output_pin,GPIO.LOW)
 		GPIO.setup(output_pin,GPIO.IN)
+
+	def send(self):
+		while self.running:
+			if not self.send_queue.empty():
+				difference = (datetime.now()-self.previous_edge)
+				print(difference)
+				if (difference.seconds*1000000 + difference.microseconds) > self.ack_wait:
+					transmission = self.convertToTransmission(self.send_queue.get())
+					self.transmit(transmission)
+				else:
+					sleep(self.ack_wait/1000000)
+			else:
+				sleep(self.ack_wait/1000000)
 		
 			
 
@@ -114,10 +135,4 @@ if __name__ == "__main__":
 	s = .01
 	GPIO.output(7,GPIO.LOW)
 	nic = MorrowNIC()
-	sleep(1)
-	nic.transmit(nic.convertToTransmission(" Hello Nick"))
-	sleep(1)
-	trans = nic.transmission_queue.get()
-
-	print(len(trans))
-	print(nic.convertToText(trans))
+	
