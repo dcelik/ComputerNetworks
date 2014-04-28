@@ -16,7 +16,7 @@ class CN_RouterSender:
                     }
 
     # When Connecting to Olin Network, use the ip given by eth1 of ifconfig
-    def __init__(self,Router_Address=("192.168.100.73",5073)):
+    def __init__(self,Router_Address=("192.168.100.73",5074)):
 
         socket, rtsocket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, RouterSocket.RouterSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 
