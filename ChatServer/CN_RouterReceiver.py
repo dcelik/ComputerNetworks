@@ -14,7 +14,7 @@ class CN_RouterReceiver(object):
     
     def __init__(self,Router_Address=("192.168.100.73",5073)):
 
-        socket, rtsocket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, RouterSocket.socket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
+        socket, rtsocket, AF_INET, SOCK_DGRAM, timeout = CN_Sockets.socket, RouterSocket.RouterSocket, CN_Sockets.AF_INET, CN_Sockets.SOCK_DGRAM, CN_Sockets.timeout
 
         self.Router_Address = Router_Address
 
@@ -22,7 +22,7 @@ class CN_RouterReceiver(object):
             with rtsocket(AF_INET,SOCK_DGRAM) as rtsock:
                 sock.bind(Router_Address)
                 sock.settimeout(2.0) # 2 second timeout
-                rtsock.bind(("0.0.73.84","69"))
+                rtsock.bind(("0.0.73.73","69"))
                 #rtsock.settimeout(2.0) # 2 second timeout
                 
                 print ("UDP_Receiver started for CN_RouterReceiver at IP address {} on port {}".format(
