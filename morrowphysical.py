@@ -36,7 +36,8 @@ class MorrowNIC(object):
 		self.running = True
 		self.send_queue = Queue()
 		self.ack_queue = Queue()
-		self.send_queue.put("B cat ran down the sidewalk")
+
+		#self.send_queue.put("A cat ran down the sidewalk")
 		#self.send_queue.put("More stuff")
 		self.ack_wait = self.pulse_duration*10
 		self.send_thread = threading.Thread(target=self.send())
@@ -134,8 +135,9 @@ class MorrowNIC(object):
 		while self.running:
 			if not self.ack_queue.empty():
 				transmission = self.convertToTransmission(self.ack_queue.get())
-				sleep(self.pulse_duration*5/1000000)
+				sleep(self.pulse_duration*2/1000000)
 				self.transmit(transmission)
+				print("ack sent")
 			elif not self.send_queue.empty():
 				difference = (datetime.now()-self.previous_edge)
 				if (difference.seconds*1000000 + difference.microseconds) > self.ack_wait:
