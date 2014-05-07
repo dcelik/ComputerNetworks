@@ -1,2 +1,4 @@
 *.pyc
 SocketTest.py
+GlobalVars.py
+MAC_Identifier.py
